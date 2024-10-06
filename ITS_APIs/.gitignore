@@ -1,0 +1,66 @@
+# .NET build artifacts
+bin/
+obj/
+
+# User-specific files
+*.user
+*.userosscache
+*.suo
+*.sln.docstates
+
+# Mac-specific files
+.DS_Store
+*.DS_Store
+
+# VS Code settings folder
+.vscode/
+
+# Rider IDE folder
+.idea/
+
+# Visual Studio Code workspace settings
+.vscode/*
+
+# Auto-generated files
+*.log
+*.ncrunchproject
+*.ntvs_analysis.dat
+*.nvuser
+*.pidb
+*.sln.ide
+
+# Resharper settings
+_ReSharper/
+*.[Rr]e[Ss]harper
+
+# JetBrains Rider artifacts
+.idea/
+
+# Coverage and test results
+TestResults/
+*.trx
+*.coverage
+*.coveragexml
+*.testlog
+*.tests
+coverage*.json
+coverage*.xml
+coverage*.info
+
+# Logs
+*.log
+
+# NPM packages (if using Node in any way)
+node_modules/
+
+# Entity Framework Migrations
+Migrations/
+
+# Publish directory
+publish/
+
+# ASP.NET Scaffolding
+.scaffolding
+
+# Include folder for nuget packages (if using)
+**/packages/*/
