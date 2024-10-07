@@ -1,0 +1,43 @@
+@ITS_URL = http://localhost:5288
+
+
+### Get all cars
+GET  {{ITS_URL}}/api/Car
+Accept: application/json
+
+###
+
+### Get a car by ID (Replace {id} with actual car ID)
+GET  {{ITS_URL}}/api/Car/1
+Accept: application/json
+
+###
+
+### Create a new car
+POST  {{ITS_URL}}/api/Car
+Content-Type: application/json
+
+{
+  "carPlate": "ABC123",
+  "url": "https://example.com/carimage.png",
+  "userId": 5
+}
+
+###
+
+### Update an existing car (Replace {id} with actual car ID)
+PUT  {{ITS_URL}}/api/Car/1
+Content-Type: application/json
+
+{
+  "id": 1,
+  "carPlate": "XYZ789",
+  "url": "https://example.com/newcarimage.png",
+  "userId": 3
+}
+
+###
+
+### Delete a car (Replace {id} with actual car ID)
+DELETE  {{ITS_URL}}/api/Car/4
+Accept: application/json

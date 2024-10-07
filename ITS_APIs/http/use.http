@@ -1,0 +1,44 @@
+@ITS_URL = http://localhost:5288
+
+### Get all users
+GET  {{ITS_URL}}/api/User
+Accept: application/json
+
+###
+
+### Get a user by ID (Replace {id} with actual user ID)
+GET  {{ITS_URL}}/api/User/1
+Accept: application/json
+
+###
+
+### Create a new user
+POST  {{ITS_URL}}/api/User
+Content-Type: application/json
+
+{
+  "username": "1",
+  "password": "password123",
+  "email": "1@example1.com",
+  "role": "admin"
+}
+
+###
+
+### Update an existing user (Replace {id} with actual user ID)
+PUT  {{ITS_URL}}/api/User/1
+Content-Type: application/json
+
+{
+  "id": 1, 
+  "username": "johndoe_updated",
+  "password": "newpassword123",
+  "email": "johndoe_updated@example.com",
+  "role": "user"
+}
+
+###
+
+### Delete a user (Replace {id} with actual user ID)
+DELETE  {{ITS_URL}}/api/User/1
+Accept: application/json

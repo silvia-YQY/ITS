@@ -1,0 +1,50 @@
+@ITS_URL = http://localhost:5288
+
+### Get all orders
+GET {{ITS_URL}}/api/Order
+Accept: application/json
+
+###
+
+### Get an order by ID (Replace {id} with actual order ID)
+GET {{ITS_URL}}/api/Order/1
+Accept: application/json
+
+###
+
+### Create a new order
+POST {{ITS_URL}}/api/Order
+Content-Type: application/json
+
+{
+  "carId": 1,  
+  "userId": 1,  
+  "parkingLocationId": 1,  
+  "startTime": "2024-10-07T10:00:00",
+  "endTime": "2024-10-07T12:00:00",
+  "fee": 15.50,
+  "status": "Confirm"
+}
+
+###
+
+### Update an existing order (Replace {id} with actual order ID)
+PUT {{ITS_URL}}/api/Order/1
+Content-Type: application/json
+
+{
+  "id": 1,  
+  "carId": 1,   
+  "userId": 1,   
+  "parkingLocationId": 1,  
+  "startTime": "2024-10-07T10:00:00",
+  "endTime": "2024-10-07T13:00:00", 
+  "fee": 20.00,
+  "status": "Done"  
+}
+
+###
+
+### Delete an order (Replace {id} with actual order ID)
+DELETE {{ITS_URL}}/api/Order/1
+Accept: application/json
