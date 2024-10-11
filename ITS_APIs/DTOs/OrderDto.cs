@@ -17,13 +17,12 @@ namespace ITS_APIs.DTOs
     [Required(ErrorMessage = "StartTime is required")]
     public required DateTime StartTime { get; set; }
 
-    [Required(ErrorMessage = "EndTime is required")]
-    public required DateTime EndTime { get; set; }
+    public DateTime? EndTime { get; set; }
 
     [Required(ErrorMessage = "Fee is required")]
     [Range(1, 10000, ErrorMessage = "Fee must be positive value")]
     public required decimal Fee { get; set; }
-    public OrderStatus OrderStatus { get; set; }
+    public required OrderStatus OrderStatus { get; set; }
 
     public string? CarPlate { get; set; }
     public string? UserName { get; set; }

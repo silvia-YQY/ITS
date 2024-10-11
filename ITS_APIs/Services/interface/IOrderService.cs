@@ -13,5 +13,7 @@ namespace ITS_APIs.Services
     Task UpdateOrderAsync(Order Order);
     Task DeleteOrderAsync(int id);
     Task<Order?> OrderExists(int id);
+
+    Task<Order?> UpdateOrderStatusAsync(Order order);
   }
 }

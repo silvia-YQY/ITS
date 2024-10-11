@@ -10,7 +10,9 @@ public class MappingProfile : Profile
               CreateMap<CarDto, Car>()
                      .ForAllMembers(opt => opt.Condition((src, dest, srcMember) => srcMember != null));
               CreateMap<Car, CarDto>()
+                     .ForMember(dest => dest.Users, opt => opt.MapFrom(src => src.User))
                      .ForAllMembers(opt => opt.Condition((src, dest, srcMember) => srcMember != null));
+
 
               CreateMap<User, UserDto>();
               CreateMap<User, UserResponseDto>()
@@ -21,11 +23,13 @@ public class MappingProfile : Profile
                      .ForMember(dest => dest.CarId, opt => opt.MapFrom(src => src.CarId))
                      .ForMember(dest => dest.UserId, opt => opt.MapFrom(src => src.UserId))
                      .ForMember(dest => dest.Car, opt => opt.Ignore())
-                     .ForMember(dest => dest.User, opt => opt.Ignore());
+                     .ForMember(dest => dest.User, opt => opt.Ignore())
+                     .ForAllMembers(opt => opt.Condition((src, dest, srcMember) => srcMember != null));
 
               CreateMap<Order, OrderDto>()
                      .ForMember(dest => dest.CarPlate, opt => opt.MapFrom(src => src.Car.CarPlate))
-                     .ForMember(dest => dest.UserName, opt => opt.MapFrom(src => src.User.Username));
+                     .ForMember(dest => dest.UserName, opt => opt.MapFrom(src => src.User.Username))
+                     .ForMember(dest => dest.OrderStatus, opt => opt.MapFrom(src => src.OrderStatus));
 
 
        }

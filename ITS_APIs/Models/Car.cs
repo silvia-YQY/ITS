@@ -16,7 +16,6 @@ public class Car
 
   [Required(ErrorMessage = "CarPlate is required")]
   [Column("car_plate")]  // mapped CarPlate to car_plate column
-
   public string CarPlate { get; set; } = "";
 
   public ICollection<User> User { get; set; } = new List<User>(); // init property

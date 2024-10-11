@@ -8,10 +8,15 @@ namespace ITS_APIs.Services
   public class OrderService : IOrderService
   {
     private readonly ITSDbContext _context;
+    private readonly ICarService _carService;
+    private readonly IUserService _userService;
 
-    public OrderService(ITSDbContext context)
+    public OrderService(ITSDbContext context, ICarService carService,
+    IUserService userService)
     {
       _context = context;
+      _carService = carService;
+      _userService = userService;
     }
 
     public async Task<IEnumerable<Order>> GetAllOrdersAsync()
@@ -64,19 +69,51 @@ namespace ITS_APIs.Services
       return Order;
     }
 
-    public async Task UpdateOrderAsync(Order Order)
+    public async Task UpdateOrderAsync(Order order)
     {
-      var orderObj = await OrderExists(Order.Id);
-      if (orderObj != null)
+      var existingOrder = await GetOrderByIdAsync(order.Id);
+
+
+      if (existingOrder == null)
       {
-        _context.Entry(Order).State = EntityState.Modified;
-        await _context.SaveChangesAsync();
-      }
-      else
-      {
-        throw new KeyNotFoundException($"Order not found");
+        throw new ArgumentException($"Order with Id {order.Id} does not exist");
       }
 
+      var existingCar = await _carService.GetCarByIdAsync(order.CarId);
+      var existingUser = await _userService.GetUserByIdAsync(order.CarId);
+
+      if (existingCar == null)
+      {
+        throw new ArgumentException($"Car with Id {order.CarId} does not exist");
+      }
+
+      if (existingUser == null)
+      {
+        throw new ArgumentException($"User with Id {order.UserId} does not exist");
+      }
+
+
+      // prevent the starttime being change
+      order.StartTime = existingOrder.StartTime;
+
+
+      if (order.EndTime != existingOrder.EndTime)
+      {
+        var fee = CalculateRentalFee(order);
+        order.Fee = fee;
+        order.OrderStatus = Enums.OrderStatus.Pending;
+      }
+
+
+      try
+      {
+        _context.Entry(existingOrder).CurrentValues.SetValues(order);
+        await _context.SaveChangesAsync();
+      }
+      catch (Exception ex)
+      {
+        throw new InvalidOperationException("An error occurred while creating the order.", ex);
+      }
     }
 
     public async Task DeleteOrderAsync(int id)
@@ -92,6 +129,22 @@ namespace ITS_APIs.Services
     public async Task<Order?> OrderExists(int id)
     {
       return await _context.Orders.FindAsync(id);
+    }
+
+    public async Task<Order?> UpdateOrderStatusAsync(Order order)
+    {
+      await _context.SaveChangesAsync();
+      return order;
+    }
+
+
+    private decimal CalculateRentalFee(Order order)
+    {
+      // Calculate the total number of hours between the end time and start time
+      var totalHours = (order.EndTime - order.StartTime).TotalHours;
+
+      // Multiply the total hours by the rate (e.g., 5 per hour)
+      return 5 * (decimal)totalHours;
     }
   }
 }

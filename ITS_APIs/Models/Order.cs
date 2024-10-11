@@ -1,6 +1,7 @@
 using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 using ITS_APIs.Enums;
 
 
@@ -15,14 +16,14 @@ namespace ITS_APIs.Models
     public int CarId { get; set; }
 
     // Navigation property for Car
-    public Car? Car { get; set; }
+    public Car Car { get; set; } = null!;
 
     // Foreign key to the User
     [Column("user_id")]
     public int UserId { get; set; }
 
     // Navigation property for User
-    public User? User { get; set; }
+    public User User { get; set; } = null!;
 
     // StartTime is required
     [Required(ErrorMessage = "Start time is required")]
@@ -30,16 +31,8 @@ namespace ITS_APIs.Models
     public DateTime StartTime { get; set; }
 
     // EndTime is required
-    [Required(ErrorMessage = "End time is required")]
     [Column("end_time")]
     public DateTime EndTime { get; set; }
-
-    // Parking location foreign key
-    [Column("parking_location_id")]
-    public int ParkingLocationId { get; set; }
-
-    // Navigation property for ParkingLocation
-    public ParkingLocation? ParkingLocation { get; set; }
 
     // Fee for the order (required and has precision)
     [Required(ErrorMessage = "Fee is required")]
@@ -48,6 +41,7 @@ namespace ITS_APIs.Models
 
     // Status Enum (Confirm, Done, Cancel, Pending)
     [Required(ErrorMessage = "OrderStatus is required")]
+    [Column(TypeName = "int")]
     public OrderStatus OrderStatus { get; set; }
   }
 

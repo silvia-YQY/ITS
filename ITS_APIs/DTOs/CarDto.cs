@@ -1,5 +1,6 @@
 
 using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 
 namespace ITS_APIs.DTOs
 {
@@ -7,12 +8,15 @@ namespace ITS_APIs.DTOs
   {
     public int Id { get; set; }
     public string Url { get; set; } = "";
-    public int UserId { get; set; }
+    public required int UserId { get; set; }
 
     [Required(ErrorMessage = "CarPlate is required")]
-    public decimal CarPlate { get; set; }
+    public required string CarPlate { get; set; }
 
-    public List<OrderDto> Rentals { get; set; } = new List<OrderDto>();
+    [JsonIgnore]
+    public List<OrderDto> Order { get; set; } = new List<OrderDto>();
+
+    public List<UserDto> Users { get; set; } = new List<UserDto>();
   }
 
 }

@@ -12,7 +12,6 @@ namespace ITS_APIs.Models
     public DbSet<Car> Cars { get; set; }
     public DbSet<User> Users { get; set; }
     public DbSet<Order> Orders { get; set; }
-    public DbSet<ParkingLocation> ParkingLocations { get; set; }
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
       modelBuilder.Entity<User>()
@@ -28,6 +27,7 @@ namespace ITS_APIs.Models
         entity.Property(e => e.Fee).IsRequired();
         entity.Property(e => e.OrderStatus).IsRequired()
                                            .HasConversion<int>();
+
         entity.Property(e => e.CarId)
               .HasColumnName("car_id");
 

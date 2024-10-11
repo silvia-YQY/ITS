@@ -4,6 +4,7 @@ using ITS_APIs.Services;
 using AutoMapper;
 using ITS_APIs.DTOs;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.EntityFrameworkCore;
 
 namespace ITS_APIs.Controllers
 {
@@ -11,12 +12,12 @@ namespace ITS_APIs.Controllers
   [ApiController]
   public class OrderController : ControllerBase
   {
-    private readonly IOrderService _context;
+    private readonly IOrderService _orderService;
     private readonly IMapper _mapper;
     private readonly ILogger<OrderController> _logger;
-    public OrderController(IOrderService context, IMapper mapper, ILogger<OrderController> logger)
+    public OrderController(IOrderService service, IMapper mapper, ILogger<OrderController> logger)
     {
-      _context = context;
+      _orderService = service;
       _mapper = mapper;
       _logger = logger;
     }
@@ -27,7 +28,7 @@ namespace ITS_APIs.Controllers
     {
       try
       {
-        var orders = await _context.GetAllOrdersAsync();
+        var orders = await _orderService.GetAllOrdersAsync();
         var orderDtos = _mapper.Map<List<OrderDto>>(orders);
         return Ok(orderDtos);
       }
@@ -45,7 +46,7 @@ namespace ITS_APIs.Controllers
     {
       try
       {
-        var orders = await _context.GetPagedOrderAsync(pageNumber, pageSize);
+        var orders = await _orderService.GetPagedOrderAsync(pageNumber, pageSize);
         var OrderDtos = _mapper.Map<List<OrderDto>>(orders.Items);
 
         var pagedResult = new PagedResultDto<OrderDto>
@@ -70,7 +71,7 @@ namespace ITS_APIs.Controllers
     [HttpGet("{id}")]
     public async Task<ActionResult<Order>> GetOrder(int id)
     {
-      var order = await _context.GetOrderByIdAsync(id);
+      var order = await _orderService.GetOrderByIdAsync(id);
       if (order == null)
       {
         return StatusCode(StatusCodes.Status500InternalServerError, $"order with Id {id} does not exist");
@@ -86,15 +87,17 @@ namespace ITS_APIs.Controllers
     {
       try
       {
-        var createOrder = await _context.CreateOrderAsync(order);
-        var createOrderDtos = _mapper.Map<OrderDto>(createOrder);
-        return CreatedAtAction(nameof(GetOrder), new { id = order.Id }, createOrder);
+
+        var createdOrder = await _orderService.CreateOrderAsync(order);
+
+        var createOrderDtos = _mapper.Map<OrderDto>(createdOrder);
+        return CreatedAtAction(nameof(GetOrder), new { id = createdOrder.Id }, createOrderDtos);
 
       }
-      catch (Exception error)
+      catch (Exception ex)
       {
-
-        return StatusCode(StatusCodes.Status500InternalServerError, error);
+        _logger.LogError(ex, "An error occurred while processing create order.");
+        return StatusCode(StatusCodes.Status500InternalServerError, "An internal server error occurred.");
       }
 
     }
@@ -111,13 +114,12 @@ namespace ITS_APIs.Controllers
 
       try
       {
-        await _context.UpdateOrderAsync(order);
-
+        await _orderService.UpdateOrderAsync(order);
         return Ok("Update successful");
       }
       catch (Exception error)
       {
-
+        _logger.LogError(error, "An error occurred while updating the order: {Message}", error.Message);
         return StatusCode(StatusCodes.Status500InternalServerError, error);
       }
 
@@ -129,7 +131,7 @@ namespace ITS_APIs.Controllers
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeleteOrder(int id)
     {
-      var Order = await _context.GetOrderByIdAsync(id);
+      var Order = await _orderService.GetOrderByIdAsync(id);
       if (Order == null)
       {
         return StatusCode(StatusCodes.Status500InternalServerError, $"Order with Id {id} does not exist");
@@ -137,16 +139,50 @@ namespace ITS_APIs.Controllers
       }
       try
       {
-        await _context.DeleteOrderAsync(id);
+        await _orderService.DeleteOrderAsync(id);
         return Ok("Delete successful");
       }
       catch (Exception ex)
       {
-        // 处理异常并记录日志
         _logger.LogError(ex, "An unexpected error occurred while getting Order.");
         return StatusCode(StatusCodes.Status500InternalServerError, "An unexpected error occurred.");
       }
 
     }
+
+    [Authorize(Policy = "AdminPolicy")]
+    [HttpPut("status/{id}")]
+    public async Task<IActionResult> UpdateOrderStatus(int id, [FromBody] OrderStatusUpdateDto statusUpdateDto)
+    {
+      try
+      {
+        // searching for existing order
+        var order = await _orderService.GetOrderByIdAsync(id);
+        if (order == null)
+        {
+          _logger.LogError($"Order with id {id} not found");
+          return NotFound($"Order with id {id} not found");
+        }
+
+        // update status
+        order.OrderStatus = statusUpdateDto.OrderStatus;
+
+        // save change
+        await _orderService.UpdateOrderStatusAsync(order);
+
+        return Ok("Update successful");
+      }
+      catch (DbUpdateException ex)
+      {
+        _logger.LogError(ex, "Failed to update order status");
+        return StatusCode(StatusCodes.Status500InternalServerError, "Failed to update order status");
+      }
+      catch (Exception ex)
+      {
+        _logger.LogError(ex, "An unexpected error occurred");
+        return StatusCode(StatusCodes.Status500InternalServerError, "An unexpected error occurred");
+      }
+    }
+
   }
 }

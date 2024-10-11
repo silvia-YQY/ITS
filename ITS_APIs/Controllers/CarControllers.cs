@@ -14,13 +14,13 @@ namespace ITS_APIs.Controllers
   [ApiController]
   public class CarController : ControllerBase
   {
-    private readonly ICarService _context;
+    private readonly ICarService _carService;
     private readonly IMapper _mapper;
     private readonly ILogger<CarController> _logger;
 
-    public CarController(ICarService context, IMapper mapper, ILogger<CarController> logger)
+    public CarController(ICarService carService, IMapper mapper, ILogger<CarController> logger)
     {
-      _context = context;
+      _carService = carService;
       _mapper = mapper;
       _logger = logger;
     }
@@ -29,7 +29,7 @@ namespace ITS_APIs.Controllers
     [HttpGet]
     public async Task<ActionResult<IEnumerable<Car>>> GetCars()
     {
-      var cars = await _context.GetAllCarsAsync();
+      var cars = await _carService.GetAllCarsAsync();
       var carDtos = _mapper.Map<List<Car>>(cars);
       return Ok(carDtos);
     }
@@ -39,7 +39,7 @@ namespace ITS_APIs.Controllers
     {
       try
       {
-        var cars = await _context.GetPagedCarAsync(pageNumber, pageSize);
+        var cars = await _carService.GetPagedCarAsync(pageNumber, pageSize);
         var CarDtos = _mapper.Map<List<CarDto>>(cars.Items);
 
         var pagedResult = new PagedResultDto<CarDto>
@@ -64,7 +64,7 @@ namespace ITS_APIs.Controllers
     [HttpGet("{id}")]
     public async Task<ActionResult<Car>> GetCar(int id)
     {
-      var car = await _context.GetCarByIdAsync(id);
+      var car = await _carService.GetCarByIdAsync(id);
       if (car == null)
       {
         return StatusCode(StatusCodes.Status500InternalServerError, $"car with Id {id} does not exist");
@@ -78,9 +78,14 @@ namespace ITS_APIs.Controllers
     [HttpPost]
     public async Task<ActionResult<Car>> PostCar(Car car)
     {
+
+
+      if (await _carService.CheckCarPlate(car))
+        return BadRequest("This car plate is already registered.");
+
       try
       {
-        var createCar = await _context.CreateCarAsync(car);
+        var createCar = await _carService.CreateCarAsync(car);
         var createCarDtos = _mapper.Map<CarDto>(createCar);
         return CreatedAtAction(nameof(GetCar), new { id = car.Id }, createCar);
 
@@ -97,21 +102,27 @@ namespace ITS_APIs.Controllers
     [HttpPut("{id}")]
     public async Task<IActionResult> PutCar(int id, Car car)
     {
+      var existingCar = await _carService.GetCarByIdAsync(id);
       if (id != car.Id)
       {
         return BadRequest("Id mismatch");
       }
 
+      if (existingCar == null)
+      {
+        return StatusCode(StatusCodes.Status500InternalServerError, $"Car with Id {id} does not exist");
+      }
+
       try
       {
-        await _context.UpdateCarAsync(car);
+        await _carService.UpdateCarAsync(car, existingCar);
 
         return Ok("Update successful");
       }
-      catch (Exception error)
+      catch (Exception ex)
       {
-
-        return StatusCode(StatusCodes.Status500InternalServerError, error);
+        _logger.LogError(ex, "An error occurred while processing the request.");
+        return StatusCode(StatusCodes.Status500InternalServerError, "An error occurred while processing your request.");
       }
 
     }
@@ -121,7 +132,7 @@ namespace ITS_APIs.Controllers
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeleteCar(int id)
     {
-      var Car = await _context.GetCarByIdAsync(id);
+      var Car = await _carService.GetCarByIdAsync(id);
       if (Car == null)
       {
         return StatusCode(StatusCodes.Status500InternalServerError, $"Car with Id {id} does not exist");
@@ -129,12 +140,12 @@ namespace ITS_APIs.Controllers
       }
       try
       {
-        await _context.DeleteCarAsync(id);
+        await _carService.DeleteCarAsync(id);
         return Ok("Delete successful");
       }
       catch (Exception ex)
       {
-        // 处理异常并记录日志
+
         _logger.LogError(ex, "An unexpected error occurred while getting Car.");
         return StatusCode(StatusCodes.Status500InternalServerError, "An unexpected error occurred.");
       }

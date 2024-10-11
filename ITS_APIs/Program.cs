@@ -1,4 +1,6 @@
 using System.Text;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using ITS_APIs.Models;
 using ITS_APIs.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -23,7 +25,17 @@ builder.Services.AddDbContext<ITSDbContext>(options =>
 
 
 // Add MVC Controller services
-builder.Services.AddControllers();
+builder.Services.AddControllers()
+   .AddJsonOptions(options =>
+    {
+      // 不使用 ReferenceHandler.Preserve，以避免生成 $id 和 $values 字段
+      options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles;
+      options.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingDefault;
+      // 可选：配置其他序列化选项
+      options.JsonSerializerOptions.DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.Never; // Ensure default values are included
+      options.JsonSerializerOptions.PropertyNamingPolicy = null; // Optional: maintain original casing of property names
+      options.JsonSerializerOptions.WriteIndented = true; // Optional: format output JSON
+    });
 
 
 builder.Services.AddAutoMapper(typeof(Program).Assembly);

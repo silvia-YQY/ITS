@@ -36,7 +36,10 @@ namespace ITS_APIs.Services
     }
     public async Task<Car> GetCarByIdAsync(int id)
     {
-      var car = await _context.Cars.FindAsync(id);
+      var car = await _context.Cars
+                .Include(c => c.User)  // Include the related users
+                .Include(c => c.Orders)  // Include the related orders
+                .FirstOrDefaultAsync(c => c.Id == id);
       if (car == null)
       {
         throw new KeyNotFoundException($"Car with ID {id} not found.");
@@ -52,18 +55,10 @@ namespace ITS_APIs.Services
       return Car;
     }
 
-    public async Task UpdateCarAsync(Car Car)
+    public async Task UpdateCarAsync(Car updatedCar, Car existingCar)
     {
-      var carObj = await CarExists(Car.Id);
-      if (carObj != null)
-      {
-        _context.Entry(Car).State = EntityState.Modified;
-        await _context.SaveChangesAsync();
-      }
-      else
-      {
-        throw new KeyNotFoundException($"Cars not found");
-      }
+      _context.Entry(existingCar).CurrentValues.SetValues(updatedCar);
+      await _context.SaveChangesAsync();
 
     }
 
@@ -80,6 +75,15 @@ namespace ITS_APIs.Services
     public async Task<Car?> CarExists(int id)
     {
       return await _context.Cars.FindAsync(id);
+    }
+
+
+    public async Task<bool> CheckCarPlate(Car car)
+    {
+      {
+        return await _context.Cars
+            .AnyAsync(c => c.CarPlate == car.CarPlate && c.Id != car.Id);  // Ensure it's not the same car being updated
+      }
     }
   }
 }

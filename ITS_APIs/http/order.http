@@ -4,10 +4,14 @@
 GET {{ITS_URL}}/api/Order
 Accept: application/json
 
+### Get a car list by page
+GET {{ITS_URL}}/api/Order/allByPage?pageNumber=1&pageSize=3
+Accept: application/json
+
 ###
 
 ### Get an order by ID (Replace {id} with actual order ID)
-GET {{ITS_URL}}/api/Order/1
+GET {{ITS_URL}}/api/Order/2
 Accept: application/json
 
 ###
@@ -15,36 +19,50 @@ Accept: application/json
 ### Create a new order
 POST {{ITS_URL}}/api/Order
 Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1lIjoiYWRtaW4xMjMiLCJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9lbWFpbGFkZHJlc3MiOiJ1aW8iLCJodHRwOi8vc2NoZW1hcy5taWNyb3NvZnQuY29tL3dzLzIwMDgvMDYvaWRlbnRpdHkvY2xhaW1zL3JvbGUiOiJBZG1pbiIsImV4cCI6MTcyODY5OTE0NSwiaXNzIjoieW91cl9pc3N1ZXJfaGVyZSIsImF1ZCI6InlvdXJfYXVkaWVuY2VfaGVyZSJ9.ZF3ijFDcQMr8DvsjtIQdIW2cMWgrLYr2l1VeFUPNG2o
 
 {
-  "carId": 1,  
-  "userId": 1,  
-  "parkingLocationId": 1,  
-  "startTime": "2024-10-07T10:00:00",
-  "endTime": "2024-10-07T12:00:00",
-  "fee": 15.50,
-  "OrderStatus": "Confirm"
+  "carId": 1,
+  "userId": 9,
+  "startTime": "2024-10-11T10:00:00",
+  "endTime": "2024-10-11T10:00:00",
+  "orderStatus": 0
 }
+
 
 ###
 
 ### Update an existing order (Replace {id} with actual order ID)
-PUT {{ITS_URL}}/api/Order/1
+PUT {{ITS_URL}}/api/Order/2
 Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1lIjoiYWRtaW4xMjMiLCJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9lbWFpbGFkZHJlc3MiOiJ1aW8iLCJodHRwOi8vc2NoZW1hcy5taWNyb3NvZnQuY29tL3dzLzIwMDgvMDYvaWRlbnRpdHkvY2xhaW1zL3JvbGUiOiJBZG1pbiIsImV4cCI6MTcyODY5OTE0NSwiaXNzIjoieW91cl9pc3N1ZXJfaGVyZSIsImF1ZCI6InlvdXJfYXVkaWVuY2VfaGVyZSJ9.ZF3ijFDcQMr8DvsjtIQdIW2cMWgrLYr2l1VeFUPNG2o
 
 {
-  "id": 1,  
-  "carId": 1,   
-  "userId": 1,   
-  "parkingLocationId": 1,  
+  "id": 2,
+  "carId": 2,   
+  "userId": 10,   
   "startTime": "2024-10-07T10:00:00",
   "endTime": "2024-10-07T13:00:00", 
   "fee": 20.00,
-  "status": "Done"  
+  "orderStatus": 0  
 }
 
 ###
 
 ### Delete an order (Replace {id} with actual order ID)
-DELETE {{ITS_URL}}/api/Order/1
+DELETE {{ITS_URL}}/api/Order/7
 Accept: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1lIjoiYWRtaW4xMjMiLCJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9lbWFpbGFkZHJlc3MiOiJ1aW8iLCJodHRwOi8vc2NoZW1hcy5taWNyb3NvZnQuY29tL3dzLzIwMDgvMDYvaWRlbnRpdHkvY2xhaW1zL3JvbGUiOiJBZG1pbiIsImV4cCI6MTcyODY5OTE0NSwiaXNzIjoieW91cl9pc3N1ZXJfaGVyZSIsImF1ZCI6InlvdXJfYXVkaWVuY2VfaGVyZSJ9.ZF3ijFDcQMr8DvsjtIQdIW2cMWgrLYr2l1VeFUPNG2o
+
+
+### update an order status
+
+PUT   {{ITS_URL}}/api/Order/status/2
+Content-Type: application/json
+Accept-Language: en-US,en;q=0.5
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1lIjoiYWRtaW4xMjMiLCJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9lbWFpbGFkZHJlc3MiOiJ1aW8iLCJodHRwOi8vc2NoZW1hcy5taWNyb3NvZnQuY29tL3dzLzIwMDgvMDYvaWRlbnRpdHkvY2xhaW1zL3JvbGUiOiJBZG1pbiIsImV4cCI6MTcyODY5OTE0NSwiaXNzIjoieW91cl9pc3N1ZXJfaGVyZSIsImF1ZCI6InlvdXJfYXVkaWVuY2VfaGVyZSJ9.ZF3ijFDcQMr8DvsjtIQdIW2cMWgrLYr2l1VeFUPNG2o
+
+
+{
+  "orderStatus":2
+}

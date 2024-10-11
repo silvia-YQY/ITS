@@ -4,6 +4,10 @@
 GET  {{ITS_URL}}/api/User
 Accept: application/json
 
+### Get a user list by page
+GET {{ITS_URL}}/api/User/allByPage?pageNumber=1&pageSize=3
+Accept: application/json
+
 ###
 
 ### Get a user by ID (Replace {id} with actual user ID)
@@ -17,10 +21,10 @@ POST  {{ITS_URL}}/api/User
 Content-Type: application/json
 
 {
-  "username": "1",
-  "password": "password123",
+  "username": "user1",
+  "password": "userpassword123",
   "email": "1@example1.com",
-  "role": "admin"
+  "role": "user"
 }
 
 ###
