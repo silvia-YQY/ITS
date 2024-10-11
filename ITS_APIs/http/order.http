@@ -22,7 +22,7 @@ Content-Type: application/json
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1lIjoiYWRtaW4xMjMiLCJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9lbWFpbGFkZHJlc3MiOiJ1aW8iLCJodHRwOi8vc2NoZW1hcy5taWNyb3NvZnQuY29tL3dzLzIwMDgvMDYvaWRlbnRpdHkvY2xhaW1zL3JvbGUiOiJBZG1pbiIsImV4cCI6MTcyODY5OTE0NSwiaXNzIjoieW91cl9pc3N1ZXJfaGVyZSIsImF1ZCI6InlvdXJfYXVkaWVuY2VfaGVyZSJ9.ZF3ijFDcQMr8DvsjtIQdIW2cMWgrLYr2l1VeFUPNG2o
 
 {
-  "carId": 1,
+  "carId": 2,
   "userId": 9,
   "startTime": "2024-10-11T10:00:00",
   "endTime": "2024-10-11T10:00:00",
@@ -40,10 +40,9 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hc
 {
   "id": 2,
   "carId": 2,   
-  "userId": 10,   
+  "userId": 9, 
   "startTime": "2024-10-07T10:00:00",
-  "endTime": "2024-10-07T13:00:00", 
-  "fee": 20.00,
+  "endTime": "2024-10-07T20:00:00", 
   "orderStatus": 0  
 }
 

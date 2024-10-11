@@ -117,10 +117,20 @@ namespace ITS_APIs.Controllers
         await _orderService.UpdateOrderAsync(order);
         return Ok("Update successful");
       }
-      catch (Exception error)
+      catch (ArgumentException ex)
       {
-        _logger.LogError(error, "An error occurred while updating the order: {Message}", error.Message);
-        return StatusCode(StatusCodes.Status500InternalServerError, error);
+        _logger.LogError(ex, "Validation failed: {Message}", ex.Message);
+        return NotFound(new { message = ex.Message }); // Return 404 for missing entities
+      }
+      catch (InvalidOperationException ex)
+      {
+        _logger.LogError(ex, "Failed to update order: {Message}", ex.Message);
+        return StatusCode(500, new { message = "Failed to update order" });
+      }
+      catch (Exception ex)
+      {
+        _logger.LogError(ex, "An unexpected error occurred: {Message}", ex.Message);
+        return StatusCode(500, new { message = ex.Message });
       }
 
 

@@ -80,7 +80,7 @@ namespace ITS_APIs.Services
       }
 
       var existingCar = await _carService.GetCarByIdAsync(order.CarId);
-      var existingUser = await _userService.GetUserByIdAsync(order.CarId);
+      var existingUser = await _userService.GetUserByIdAsync(order.UserId);
 
       if (existingCar == null)
       {
@@ -93,10 +93,10 @@ namespace ITS_APIs.Services
       }
 
 
-      // prevent the starttime being change
+      // prevent the start time from being change
       order.StartTime = existingOrder.StartTime;
 
-
+      // Calculate new fee if end time is changed
       if (order.EndTime != existingOrder.EndTime)
       {
         var fee = CalculateRentalFee(order);
@@ -107,7 +107,9 @@ namespace ITS_APIs.Services
 
       try
       {
+        // Map new values to existing order, except StartTime
         _context.Entry(existingOrder).CurrentValues.SetValues(order);
+        existingOrder.StartTime = order.StartTime;
         await _context.SaveChangesAsync();
       }
       catch (Exception ex)

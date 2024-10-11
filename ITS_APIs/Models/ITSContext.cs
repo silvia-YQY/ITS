@@ -22,20 +22,26 @@ namespace ITS_APIs.Models
       {
         entity.HasKey(e => e.Id);
 
-        entity.Property(e => e.StartTime).IsRequired();
-        entity.Property(e => e.EndTime).IsRequired();
-        entity.Property(e => e.Fee).IsRequired();
-        entity.Property(e => e.OrderStatus).IsRequired()
-                                           .HasConversion<int>();
+        entity.Property(e => e.StartTime)
+              .IsRequired();
+        entity.Property(e => e.EndTime)
+              .IsRequired();
+        entity.Property(e => e.Fee)
+              .IsRequired()
+              .HasColumnType("decimal(18,2)");
+        entity.Property(e => e.OrderStatus)
+              .IsRequired()
+              .HasConversion<int>();
 
         entity.Property(e => e.CarId)
               .HasColumnName("car_id");
 
+
         // relationship with car
         entity.HasOne(e => e.Car)
-                .WithMany(e => e.Orders)
-                .HasForeignKey(e => e.CarId)
-                .OnDelete(DeleteBehavior.Cascade);
+              .WithMany(e => e.Orders)
+              .HasForeignKey(e => e.CarId)
+              .OnDelete(DeleteBehavior.Cascade);
 
         // relationship with user
         entity.HasOne(e => e.User)

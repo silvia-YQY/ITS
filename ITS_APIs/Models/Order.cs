@@ -16,14 +16,14 @@ namespace ITS_APIs.Models
     public int CarId { get; set; }
 
     // Navigation property for Car
-    public Car Car { get; set; } = null!;
+    public Car? Car { get; set; }
 
     // Foreign key to the User
     [Column("user_id")]
     public int UserId { get; set; }
 
     // Navigation property for User
-    public User User { get; set; } = null!;
+    public User? User { get; set; }
 
     // StartTime is required
     [Required(ErrorMessage = "Start time is required")]
@@ -37,6 +37,7 @@ namespace ITS_APIs.Models
     // Fee for the order (required and has precision)
     [Required(ErrorMessage = "Fee is required")]
     [Range(0, 999999.99, ErrorMessage = "Fee must be a positive value")]
+    [Column(TypeName = "decimal(18,2)")]
     public decimal Fee { get; set; }
 
     // Status Enum (Confirm, Done, Cancel, Pending)
