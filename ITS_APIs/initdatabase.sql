@@ -1,52 +1,53 @@
--- create dabsebase
-CREATE DATABASE IF NOT EXISTS itsbd;
-USE itsbd;
+﻿CREATE TABLE IF NOT EXISTS `__EFMigrationsHistory` (
+    `MigrationId` varchar(150) CHARACTER SET utf8mb4 NOT NULL,
+    `ProductVersion` varchar(32) CHARACTER SET utf8mb4 NOT NULL,
+    CONSTRAINT `PK___EFMigrationsHistory` PRIMARY KEY (`MigrationId`)
+) CHARACTER SET=utf8mb4;
 
--- create User table
-CREATE TABLE Users (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    username VARCHAR(255) NOT NULL,
-    password VARCHAR(255) NOT NULL,
-    role ENUM ('admin', 'user') NOT NULL,
-    INDEX (username),
-    email VARCHAR(255) NOT NULL UNIQUE
-);
+START TRANSACTION;
 
--- create Car table
-CREATE TABLE Cars (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    url VARCHAR(1000),
-    user_id INT NOT NULL,
-    car_plate VARCHAR(255) NOT NULL,
-    INDEX (car_plate),
-    FOREIGN KEY (user_id) REFERENCES Users(id) ON DELETE CASCADE
-);
+ALTER DATABASE CHARACTER SET utf8mb4;
 
+CREATE TABLE `Cars` (
+    `Id` int NOT NULL AUTO_INCREMENT,
+    `Url` longtext CHARACTER SET utf8mb4 NOT NULL,
+    `user_id` int NOT NULL,
+    `car_plate` longtext CHARACTER SET utf8mb4 NOT NULL,
+    CONSTRAINT `PK_Cars` PRIMARY KEY (`Id`)
+) CHARACTER SET=utf8mb4;
 
+CREATE TABLE `Users` (
+    `Id` int NOT NULL AUTO_INCREMENT,
+    `Username` longtext CHARACTER SET utf8mb4 NOT NULL,
+    `Password` longtext CHARACTER SET utf8mb4 NOT NULL,
+    `Role` longtext CHARACTER SET utf8mb4 NOT NULL,
+    `Email` longtext CHARACTER SET utf8mb4 NOT NULL,
+    `CarId` int NULL,
+    CONSTRAINT `PK_Users` PRIMARY KEY (`Id`),
+    CONSTRAINT `FK_Users_Cars_CarId` FOREIGN KEY (`CarId`) REFERENCES `Cars` (`Id`)
+) CHARACTER SET=utf8mb4;
 
-CREATE TABLE ParkingLocations (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    location_name VARCHAR(255) NOT NULL, -- Location name
-    INDEX (location_name),
-    address VARCHAR(255) NOT NULL, -- Location address
-    capacity INT NOT NULL, -- Number of parking spaces
-    available_spaces INT NOT NULL -- Number of currently available spaces
-);
+CREATE TABLE `Orders` (
+    `Id` int NOT NULL AUTO_INCREMENT,
+    `car_id` int NOT NULL,
+    `user_id` int NOT NULL,
+    `start_time` datetime(6) NOT NULL,
+    `end_time` datetime(6) NOT NULL,
+    `Fee` decimal(65,30) NOT NULL,
+    `OrderStatus` longtext CHARACTER SET utf8mb4 NOT NULL,
+    CONSTRAINT `PK_Orders` PRIMARY KEY (`Id`),
+    CONSTRAINT `FK_Orders_Cars_car_id` FOREIGN KEY (`car_id`) REFERENCES `Cars` (`Id`) ON DELETE CASCADE,
+    CONSTRAINT `FK_Orders_Users_user_id` FOREIGN KEY (`user_id`) REFERENCES `Users` (`Id`) ON DELETE CASCADE
+) CHARACTER SET=utf8mb4;
 
+CREATE INDEX `IX_Orders_car_id` ON `Orders` (`car_id`);
 
--- create Order table
-CREATE TABLE Orders (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    car_id INT NOT NULL,
-    user_id INT NOT NULL,
-    start_time DATETIME NOT NULL,
-    end_time DATETIME NOT NULL,
-    INDEX (start_time), -- Add index for efficient time-based queries
-    INDEX (end_time),
-    fee DECIMAL(10,2) NOT NULL,
-    parking_location_id INT NOT NULL,
-    status ENUM ('Confirm', 'Done', 'Cancel', 'Pending') NOT NULL,
-    FOREIGN KEY (car_id) REFERENCES Cars(id) ON DELETE CASCADE, -- Delete orders if the car is deleted
-    FOREIGN KEY (user_id) REFERENCES Users(id) ON DELETE CASCADE, -- Delete orders if the user is deleted
-    FOREIGN KEY (parking_location_id) REFERENCES ParkingLocations(id) ON DELETE CASCADE
-);
+CREATE INDEX `IX_Orders_user_id` ON `Orders` (`user_id`);
+
+CREATE INDEX `IX_Users_CarId` ON `Users` (`CarId`);
+
+INSERT INTO `__EFMigrationsHistory` (`MigrationId`, `ProductVersion`)
+VALUES ('20241011054842_UpdateOrderStatusType', '8.0.8');
+
+COMMIT;
+
