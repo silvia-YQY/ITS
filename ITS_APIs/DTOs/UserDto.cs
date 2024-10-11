@@ -3,11 +3,10 @@ using System.ComponentModel.DataAnnotations.Schema;
 using System.Text.Json.Serialization;
 using ITS_APIs.Enums;
 
-namespace ITS_APIs.Models;
+namespace ITS_APIs.DTOs;
 
 
-
-public class User
+public class UserDto
 {
   // Id will be the primary key (mapped automatically by EF Core)
   public int Id { get; set; }
@@ -27,7 +26,4 @@ public class User
   [Required(ErrorMessage = "Email is required")]
   [EmailAddress(ErrorMessage = "Invalid Email Address")]
   public string Email { get; set; } = "";
-
-  public ICollection<Order> Orders { get; set; } = new List<Order>(); // init property
-
 }

@@ -23,7 +23,7 @@ Content-Type: application/json
   "startTime": "2024-10-07T10:00:00",
   "endTime": "2024-10-07T12:00:00",
   "fee": 15.50,
-  "status": "Confirm"
+  "OrderStatus": "Confirm"
 }
 
 ###

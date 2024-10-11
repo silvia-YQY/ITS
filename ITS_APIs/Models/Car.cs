@@ -11,7 +11,6 @@ public class Car
   public string Url { get; set; } = "";
 
   [Column("user_id")]  // mapped UserId to user_id column
-
   public int UserId { get; set; }
 
 
@@ -20,7 +19,7 @@ public class Car
 
   public string CarPlate { get; set; } = "";
 
-
-  public User? User { get; set; }
+  public ICollection<User> User { get; set; } = new List<User>(); // init property
+  public ICollection<Order> Orders { get; set; } = new List<Order>(); // init property
 
 }

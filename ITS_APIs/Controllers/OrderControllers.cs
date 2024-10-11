@@ -1,8 +1,9 @@
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using ITS_APIs.Models;
-using System.Collections.Generic;
-using System.Threading.Tasks;
+using ITS_APIs.Services;
+using AutoMapper;
+using ITS_APIs.DTOs;
+using Microsoft.AspNetCore.Authorization;
 
 namespace ITS_APIs.Controllers
 {
@@ -10,106 +11,142 @@ namespace ITS_APIs.Controllers
   [ApiController]
   public class OrderController : ControllerBase
   {
-    private readonly AppDbContext _context;
-
-    public OrderController(AppDbContext context)
+    private readonly IOrderService _context;
+    private readonly IMapper _mapper;
+    private readonly ILogger<OrderController> _logger;
+    public OrderController(IOrderService context, IMapper mapper, ILogger<OrderController> logger)
     {
       _context = context;
+      _mapper = mapper;
+      _logger = logger;
     }
 
     // GET: api/Order
     [HttpGet]
     public async Task<ActionResult<IEnumerable<Order>>> GetOrders()
     {
-      return await _context.Orders
-          .Include(o => o.Car)
-          .Include(o => o.User)
-          .Include(o => o.ParkingLocation)
-          .ToListAsync();
+      try
+      {
+        var orders = await _context.GetAllOrdersAsync();
+        var orderDtos = _mapper.Map<List<OrderDto>>(orders);
+        return Ok(orderDtos);
+      }
+      catch (Exception ex)
+      {
+        _logger.LogError(ex, "An error occurred while fetching orders.");
+        return StatusCode(500, "An error occurred while processing your request.");
+      }
+
+
+    }
+
+    [HttpGet("allByPage")]
+    public async Task<ActionResult<PagedResultDto<OrderDto>>> GetOrders([FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 10)
+    {
+      try
+      {
+        var orders = await _context.GetPagedOrderAsync(pageNumber, pageSize);
+        var OrderDtos = _mapper.Map<List<OrderDto>>(orders.Items);
+
+        var pagedResult = new PagedResultDto<OrderDto>
+        {
+          Items = OrderDtos,
+          TotalCount = orders.TotalCount,
+          PageNumber = pageNumber,
+          PageSize = pageSize
+        };
+
+        return Ok(pagedResult);
+      }
+      catch (Exception ex)
+      {
+        // 处理异常并记录日志
+        _logger.LogError(ex, "An unexpected error occurred while getting all cars.");
+        return StatusCode(StatusCodes.Status500InternalServerError, "An unexpected error occurred.");
+      }
     }
 
     // GET: api/Order/5
     [HttpGet("{id}")]
     public async Task<ActionResult<Order>> GetOrder(int id)
     {
-      var order = await _context.Orders
-          .Include(o => o.Car)
-          .Include(o => o.User)
-          .Include(o => o.ParkingLocation)
-          .FirstOrDefaultAsync(o => o.Id == id);
-
+      var order = await _context.GetOrderByIdAsync(id);
       if (order == null)
       {
-        return NotFound();
+        return StatusCode(StatusCodes.Status500InternalServerError, $"order with Id {id} does not exist");
       }
-
-      return order;
+      var orderDtos = _mapper.Map<OrderDto>(order);
+      return Ok(orderDtos);
     }
 
     // POST: api/Order
+    [Authorize(Policy = "AdminPolicy")]
     [HttpPost]
     public async Task<ActionResult<Order>> PostOrder(Order order)
     {
-      if (order == null)
+      try
       {
-        return BadRequest("Order data is missing.");
+        var createOrder = await _context.CreateOrderAsync(order);
+        var createOrderDtos = _mapper.Map<OrderDto>(createOrder);
+        return CreatedAtAction(nameof(GetOrder), new { id = order.Id }, createOrder);
+
+      }
+      catch (Exception error)
+      {
+
+        return StatusCode(StatusCodes.Status500InternalServerError, error);
       }
 
-      _context.Orders.Add(order);
-      await _context.SaveChangesAsync();
-
-      return CreatedAtAction(nameof(GetOrder), new { id = order.Id }, order);
     }
 
     // PUT: api/Order/5
+    [Authorize(Policy = "AdminPolicy")]
     [HttpPut("{id}")]
     public async Task<IActionResult> PutOrder(int id, Order order)
     {
       if (id != order.Id)
       {
-        return BadRequest();
+        return BadRequest("Id mismatch");
       }
-
-      _context.Entry(order).State = EntityState.Modified;
 
       try
       {
-        await _context.SaveChangesAsync();
+        await _context.UpdateOrderAsync(order);
+
+        return Ok("Update successful");
       }
-      catch (DbUpdateConcurrencyException)
+      catch (Exception error)
       {
-        if (!OrderExists(id))
-        {
-          return NotFound();
-        }
-        else
-        {
-          throw;
-        }
+
+        return StatusCode(StatusCodes.Status500InternalServerError, error);
       }
 
-      return NoContent();
+
     }
 
     // DELETE: api/Order/5
+    [Authorize(Policy = "AdminPolicy")]
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeleteOrder(int id)
     {
-      var order = await _context.Orders.FindAsync(id);
-      if (order == null)
+      var Order = await _context.GetOrderByIdAsync(id);
+      if (Order == null)
       {
-        return NotFound();
+        return StatusCode(StatusCodes.Status500InternalServerError, $"Order with Id {id} does not exist");
+
+      }
+      try
+      {
+        await _context.DeleteOrderAsync(id);
+        return Ok("Delete successful");
+      }
+      catch (Exception ex)
+      {
+        // 处理异常并记录日志
+        _logger.LogError(ex, "An unexpected error occurred while getting Order.");
+        return StatusCode(StatusCodes.Status500InternalServerError, "An unexpected error occurred.");
       }
 
-      _context.Orders.Remove(order);
-      await _context.SaveChangesAsync();
-
-      return NoContent();
-    }
-
-    private bool OrderExists(int id)
-    {
-      return _context.Orders.Any(e => e.Id == id);
     }
   }
 }

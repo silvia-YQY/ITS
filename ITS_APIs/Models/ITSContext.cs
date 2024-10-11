@@ -2,9 +2,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace ITS_APIs.Models
 {
-  public class AppDbContext : DbContext
+  public class ITSDbContext : DbContext
   {
-    public AppDbContext(DbContextOptions<AppDbContext> options)
+    public ITSDbContext(DbContextOptions<ITSDbContext> options)
         : base(options)
     {
     }
@@ -18,6 +18,31 @@ namespace ITS_APIs.Models
       modelBuilder.Entity<User>()
           .Property(r => r.Role)
           .HasConversion<string>();  //  Role translate enum to string
+
+      modelBuilder.Entity<Order>(entity =>
+      {
+        entity.HasKey(e => e.Id);
+
+        entity.Property(e => e.StartTime).IsRequired();
+        entity.Property(e => e.EndTime).IsRequired();
+        entity.Property(e => e.Fee).IsRequired();
+        entity.Property(e => e.OrderStatus).IsRequired()
+                                           .HasConversion<int>();
+        entity.Property(e => e.CarId)
+              .HasColumnName("car_id");
+
+        // relationship with car
+        entity.HasOne(e => e.Car)
+                .WithMany(e => e.Orders)
+                .HasForeignKey(e => e.CarId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+        // relationship with user
+        entity.HasOne(e => e.User)
+              .WithMany(e => e.Orders)
+              .HasForeignKey(e => e.UserId)
+              .OnDelete(DeleteBehavior.Cascade);
+      });
     }
 
   }

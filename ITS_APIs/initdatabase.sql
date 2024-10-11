@@ -2,20 +2,13 @@
 CREATE DATABASE IF NOT EXISTS itsbd;
 USE itsbd;
 
--- create role table
-CREATE TABLE Roles (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    role_name ENUM ('admin', 'user') NOT NULL
-);
-
 -- create User table
 CREATE TABLE Users (
     id INT AUTO_INCREMENT PRIMARY KEY,
     username VARCHAR(255) NOT NULL,
     password VARCHAR(255) NOT NULL,
-    role_id INT NOT NULL,
+    role ENUM ('admin', 'user') NOT NULL,
     INDEX (username),
-    FOREIGN KEY (role_id) REFERENCES Roles(id),
     email VARCHAR(255) NOT NULL UNIQUE
 );
 
