@@ -1,0 +1,104 @@
+'use client'; // Ensure the component is client-side
+import React, { useRef } from 'react';
+import { Box, Button, TextField, Typography } from '@mui/material';
+import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import { useForm } from 'react-hook-form';
+import useModal from '../hooks/useModal';
+import { fetchFromAPI } from '@/utils/fetcher';
+import Cookies from 'js-cookie';
+
+export default function LoginForm() {
+  const router = useRouter();
+  // Initialize the form
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm();
+  const { showModal } = useModal({ title: 'xx' });
+
+  const onSubmit = async (data) => {
+    await fetchFromAPI('/api/Auth/login', { method: 'POST', body: { ...data } })
+      .then((res) => {
+        console.log(res);
+        Cookies.set('token', res.token);
+        showModal({
+          title: 'login succeeded',
+          onConfirm: () => {
+            // TODO: test, will delete
+            document.cookie = 'authToken=test';
+            router.replace('/order');
+          },
+        });
+      })
+      .catch((err) => {
+        showModal({
+          title: err.message,
+          onConfirm: () => {},
+        });
+      });
+  };
+
+  return (
+    <Box component='form' noValidate onSubmit={handleSubmit(onSubmit)} sx={{ mt: 3 }} aria-labelledby='login-form'>
+      <Typography id='login-form' variant='h5' component='h1'>
+        Login
+      </Typography>
+      {/* Username Field */}
+      <TextField
+        label='Username'
+        {...register('username', { required: 'Username is required' })}
+        variant='outlined'
+        fullWidth
+        error={!!errors.username}
+        helperText={errors.username ? errors.username.message : ''}
+        margin='normal'
+        required
+        aria-label='username'
+        inputProps={{ 'aria-required': 'true' }}
+      />
+      <TextField
+        label='Email'
+        {...register('email', { required: 'Email is required' })}
+        variant='outlined'
+        fullWidth
+        error={!!errors.email}
+        helperText={errors.email ? errors.email.message : ''}
+        margin='normal'
+        required
+        aria-label='email'
+        inputProps={{ 'aria-required': 'true' }}
+      />
+
+      {/* Password Field */}
+      <TextField
+        label='Password'
+        {...register('password', { required: 'Password is required' })}
+        type='password'
+        variant='outlined'
+        fullWidth
+        margin='normal'
+        required
+        error={!!errors.password}
+        helperText={errors.password ? errors.password.message : ''}
+        aria-label='password'
+        inputProps={{ 'aria-required': 'true' }}
+      />
+
+      {/* Submit Button */}
+      <Button type='submit' fullWidth variant='contained' color='primary' sx={{ mt: 3 }} aria-label='submit'>
+        Login
+      </Button>
+      {/* Registration Prompt */}
+      <Box sx={{ mt: 2, textAlign: 'center' }}>
+        <Typography variant='body2' component='p'>
+          Don't have an account?{' '}
+          <Link component='button' variant='body2' href='/register' sx={{ ml: 1 }} aria-label='register'>
+            Register here
+          </Link>
+        </Typography>
+      </Box>
+    </Box>
+  );
+}
