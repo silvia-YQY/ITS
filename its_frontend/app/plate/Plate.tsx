@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import { TextField, Button, List, ListItem, ListItemText, IconButton, Typography, Box, Popover } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
+import { fetchFromAPI } from '@/utils/fetcher';
 
 const PlatePage = () => {
   const [carPlate, setCarPlate] = useState('');
@@ -14,10 +15,12 @@ const PlatePage = () => {
   };
 
   // Handle form submission to add a new car plate
-  const handleSubmit = (event: React.FormEvent) => {
+  const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
-    if (carPlate.trim()) {
-      setCarPlates((prev) => [...new Set([...prev, carPlate.trim()])]);
+    const plate = carPlate.trim();
+    if (plate) {
+      await fetchFromAPI('/api/Car', { method: 'POST', body: { CarPlate: plate } });
+      setCarPlates((prev) => [...new Set([...prev, plate])]);
       setCarPlate(''); // Clear the input field
     }
   };
