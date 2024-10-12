@@ -16,14 +16,13 @@ public class UserDto
   public string Username { get; set; } = "";
 
   // Password is required
-  [Required(ErrorMessage = "Password is required")]
-  public string Password { get; set; } = "";
+  // [Required(ErrorMessage = "Password is required")]
+  // public string Password { get; set; } = "";
 
-  [JsonConverter(typeof(JsonStringEnumConverter))]
-  public RoleType Role { get; set; }
+  // [JsonConverter(typeof(JsonStringEnumConverter))]
+  // public RoleType Role { get; set; }
 
   // Email is required and unique
-  [Required(ErrorMessage = "Email is required")]
   [EmailAddress(ErrorMessage = "Invalid Email Address")]
   public string Email { get; set; } = "";
 }
