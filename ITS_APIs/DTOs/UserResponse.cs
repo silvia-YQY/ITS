@@ -10,7 +10,7 @@ namespace ITS_APIs.DTOs
     public required string Email { get; set; } = "";
 
 
-    public required bool isAdmin { get; set; }
+    public required bool IsAdmin { get; set; }
 
   }
 }

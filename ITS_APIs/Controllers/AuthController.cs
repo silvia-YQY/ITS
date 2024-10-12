@@ -43,14 +43,14 @@ namespace ITS_APIs.Controllers
       {
         Username = userRegisterDto.Username,
         Email = userRegisterDto.Email,
-        Role = userRegisterDto.isAdmin,
+        Role = userRegisterDto.IsAdmin,
         Password = BCrypt.Net.BCrypt.HashPassword(userRegisterDto.Password)
       };
 
       _context.Users.Add(user);
       await _context.SaveChangesAsync();
 
-      return Ok(new { message = $"{(userRegisterDto.isAdmin == RoleType.admin ? "Admintration" : "User")} registered successfully" });
+      return Ok(new { message = $"{(userRegisterDto.IsAdmin == RoleType.admin ? "Admintration" : "User")} registered successfully" });
     }
 
     [HttpPost("login")]

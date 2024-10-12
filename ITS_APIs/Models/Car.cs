@@ -18,7 +18,7 @@ public class Car
   [Column("car_plate")]  // mapped CarPlate to car_plate column
   public string CarPlate { get; set; } = "";
 
-  public User User { get; set; } = null!;
+  public User? User { get; set; } = null!;
 
   public ICollection<Order> Orders { get; set; } = new List<Order>(); // init property
 
