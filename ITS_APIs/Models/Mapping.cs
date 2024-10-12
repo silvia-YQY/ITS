@@ -17,7 +17,7 @@ public class MappingProfile : Profile
 
               CreateMap<User, UserDto>();
               CreateMap<User, UserResponseDto>()
-                     .ForMember(dest => dest.isAdmin, opt => opt.MapFrom(src => src.Role == RoleType.admin));
+                     .ForMember(dest => dest.IsAdmin, opt => opt.MapFrom(src => src.Role == RoleType.admin));
 
 
               CreateMap<OrderDto, Order>()

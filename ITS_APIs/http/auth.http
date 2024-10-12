@@ -16,7 +16,7 @@ Accept-Language: en-US,en;q=0.5
   "username": "admin",
   "password": "1234",
   "email": "1234@example1.com",
-  "isAdmin": "admin"
+  "IsAdmin": "admin"
 }
 
 

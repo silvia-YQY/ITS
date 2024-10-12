@@ -10,7 +10,7 @@ namespace ITS_APIs.DTOs
     public required string Password { get; set; } = "";
 
     [JsonConverter(typeof(JsonStringEnumConverter))]
-    public required RoleType isAdmin { get; set; }
+    public required RoleType IsAdmin { get; set; }
 
   }
 }
