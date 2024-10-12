@@ -38,6 +38,7 @@ export default function UploadPhoto() {
           const carPlate = generateRandomCarPlate();
           setCarPlate(generateRandomCarPlate());
           console.log('Uploaded file:', file, imageUrl, previewURL);
+          console.log('user file:',user);
           await handleCreateCar({
             carPlate: carPlate,
             url: imageUrl,
