@@ -2,10 +2,12 @@
 import React, { useState } from 'react';
 import { Button, Box, Typography } from '@mui/material';
 import { fetchFromAPI } from '@/utils/fetcher';
+import { useUser } from '../context/userContext';
 
 export default function UploadPhoto() {
   const [preview, setPreview] = useState(null);
   const [carPlate, setCarPlate] = useState('');
+  const { user } = useUser();
 
   // Handle file selection
   const handleFileChange = (event) => {
@@ -39,7 +41,7 @@ export default function UploadPhoto() {
           await handleCreateCar({
             carPlate: carPlate,
             url: imageUrl,
-            userId: 13,
+            userId: user.id,
           });
         };
       };

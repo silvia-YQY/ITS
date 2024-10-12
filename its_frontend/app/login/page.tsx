@@ -1,5 +1,5 @@
 'use client'; // Ensure the component is client-side
-import React, { useRef } from 'react';
+import React from 'react';
 import { Box, Button, TextField, Typography } from '@mui/material';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
@@ -7,6 +7,7 @@ import { useForm } from 'react-hook-form';
 import useModal from '../hooks/useModal';
 import { fetchFromAPI } from '@/utils/fetcher';
 import Cookies from 'js-cookie';
+import { useUser } from '../context/userContext';
 
 export default function LoginForm() {
   const router = useRouter();
@@ -17,11 +18,18 @@ export default function LoginForm() {
     formState: { errors },
   } = useForm();
   const { showModal } = useModal({ title: 'xx' });
+  const { setUser } = useUser();
 
   const onSubmit = async (data) => {
     await fetchFromAPI('/api/Auth/login', { method: 'POST', body: { ...data } })
       .then((res) => {
         Cookies.set('token', res.Token);
+        setUser({
+          id: res.user.Id,
+          username: res.user.Username,
+          email: res.user.Email,
+          role: res.user.isAdmin ? 'admin' : 'user',
+        });
         showModal({
           title: 'login succeeded',
           onConfirm: () => {
