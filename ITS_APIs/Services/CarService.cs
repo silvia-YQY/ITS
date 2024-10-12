@@ -16,15 +16,23 @@ namespace ITS_APIs.Services
 
     public async Task<IEnumerable<Car>> GetAllCarsAsync()
     {
-      return await _context.Cars.ToListAsync();
+      return await _context.Cars
+                  .Include(c => c.User)  // Include user details
+                  .Include(c => c.Orders)
+                  .ToListAsync();
     }
 
     public async Task<PagedResultDto<Car>> GetPagedCarAsync(int pageNumber, int pageSize)
     {
-      var query = _context.Cars.AsQueryable();
+      var query = _context.Cars
+                          .Include(c => c.User)  // Include user details
+                          .Include(c => c.Orders)
+                          .AsQueryable();
 
       var totalCount = await query.CountAsync();
-      var items = await query.Skip((pageNumber - 1) * pageSize).Take(pageSize).ToListAsync();
+      var items = await query.Skip((pageNumber - 1) * pageSize)
+                              .Take(pageSize)
+                              .ToListAsync();
 
       return new PagedResultDto<Car>
       {

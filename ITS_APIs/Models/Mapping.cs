@@ -9,8 +9,9 @@ public class MappingProfile : Profile
        {
               CreateMap<CarDto, Car>()
                      .ForAllMembers(opt => opt.Condition((src, dest, srcMember) => srcMember != null));
+
               CreateMap<Car, CarDto>()
-                     .ForMember(dest => dest.Users, opt => opt.MapFrom(src => src.User))
+                     .ForMember(dest => dest.User, opt => opt.MapFrom(src => src.User))
                      .ForAllMembers(opt => opt.Condition((src, dest, srcMember) => srcMember != null));
 
 

@@ -11,7 +11,7 @@ Accept: application/json
 ###
 
 ### Get a user by ID (Replace {id} with actual user ID)
-GET  {{ITS_URL}}/api/User/1
+GET  {{ITS_URL}}/api/User/9
 Accept: application/json
 
 ###
@@ -32,6 +32,7 @@ Content-Type: application/json
 ### Update an existing user (Replace {id} with actual user ID)
 PUT  {{ITS_URL}}/api/User/1
 Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1lIjoiYWRtaW4iLCJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9lbWFpbGFkZHJlc3MiOiIxMjM0QGV4YW1wbGUxLmNvbSIsImh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vd3MvMjAwOC8wNi9pZGVudGl0eS9jbGFpbXMvcm9sZSI6IkFkbWluIiwiZXhwIjoxNzI4Nzg2NDA0LCJpc3MiOiJ5b3VyX2lzc3Vlcl9oZXJlIiwiYXVkIjoieW91cl9hdWRpZW5jZV9oZXJlIn0.8nkGIuPNgWHHDdLMT-P9Jy-UFSGyOrnZKyA_jDFrWeM
 
 {
   "id": 1, 

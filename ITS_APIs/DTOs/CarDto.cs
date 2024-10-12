@@ -13,8 +13,8 @@ namespace ITS_APIs.DTOs
     [Required(ErrorMessage = "CarPlate is required")]
     public required string CarPlate { get; set; }
 
-    [JsonIgnore]
-    public List<OrderDto> Order { get; set; } = new List<OrderDto>();
+
+    public UserDto User { get; set; } = new UserDto();
 
     public List<UserDto> Users { get; set; } = new List<UserDto>();
   }
