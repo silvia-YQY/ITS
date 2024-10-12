@@ -49,6 +49,9 @@ export default function RootLayout({
                     <li>
                       <Link href='/dashboard'>Dashboard</Link>
                     </li>
+                    <li>
+                      <Link href='/entry'>Entry</Link>
+                    </li>
                   </ul>
                 </div>
               </nav>
