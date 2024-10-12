@@ -5,18 +5,15 @@ if (typeof window === 'undefined') {
   const { cookies } = require('next/headers');
   getToken = () => {
     const cookieStore = cookies();
-    console.log('server side getToken', cookieStore.get('token')?.value);
     return cookieStore.get('token')?.value;
   };
 } else {
   getToken = () => {
-    console.log(Cookies, Cookies.get('token'), document.cookie);
     return Cookies.get('token');
   };
 }
 function getAuth() {
   const token = getToken();
-  console.log('token', token);
   return token
     ? {
         Authorization: `Bearer ${token}`,
@@ -32,7 +29,6 @@ export async function fetchFromAPI<T>(
     headers?: HeadersInit;
   } = {} // Default options: method is GET if not provided
 ): Promise<T> {
-  console.log('fetchFromAPI');
   const { method = 'GET', body, headers } = options;
   const baseUrl = process.env.NEXT_PUBLIC_SITE_URL;
   const reqHeaders = {
@@ -40,7 +36,6 @@ export async function fetchFromAPI<T>(
     ...headers, // You can add additional headers if needed
     ...getAuth(),
   };
-  console.log(reqHeaders);
   const res = await fetch(`${baseUrl}${endpoint}`, {
     method,
     headers: reqHeaders,
@@ -58,6 +53,7 @@ export async function fetchFromAPI<T>(
       throw new Error(errorText);
     }
   }
-
-  return await res.json();
+  const response = await res.json();
+  console.info('fetchFromAPI', endpoint, response);
+  return response;
 }

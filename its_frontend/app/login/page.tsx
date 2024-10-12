@@ -22,7 +22,6 @@ export default function LoginForm() {
     await fetchFromAPI('/api/Auth/login', { method: 'POST', body: { ...data } })
       .then((res) => {
         Cookies.set('token', res.Token);
-        console.log('set token in client', res.Token, Cookies.get('token'));
         showModal({
           title: 'login succeeded',
           onConfirm: () => {
