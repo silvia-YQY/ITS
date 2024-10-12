@@ -4,7 +4,7 @@ import { startsWith } from 'lodash-es';
 
 export function middleware(req: NextRequest) {
   // Get the token from cookies
-  const token = req.cookies.get('authToken');
+  const token = req.cookies.get('token');
 
   if (!startsWith(req.nextUrl.pathname, '/_next') && !startsWith(req.nextUrl.pathname, '/favicon.ico') && !startsWith(req.nextUrl.pathname, '/api')) {
     // If no token is found and the user is not on the login page, redirect to /login

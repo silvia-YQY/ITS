@@ -19,9 +19,14 @@ export async function POST(request: Request) {
     }
 
     const externalRes = await externalApiResponse.json();
-    console.log(externalRes.token);
+    console.log(externalRes.Token);
     const res = NextResponse.json(externalRes);
-    res.cookies.set('token', `externalRes.token`);
+    res.cookies.set('token', externalRes.Token, {
+      httpOnly: false,
+      maxAge: 60 * 60 * 24 * 30, // 30 days in seconds
+      path: '/', // Accessible anywhere in the app
+    });
+    console.log('set server token', res.cookies.get('token')?.value);
     return res;
   } catch (error) {
     console.log('error', error);

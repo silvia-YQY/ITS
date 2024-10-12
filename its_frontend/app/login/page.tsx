@@ -21,13 +21,11 @@ export default function LoginForm() {
   const onSubmit = async (data) => {
     await fetchFromAPI('/api/Auth/login', { method: 'POST', body: { ...data } })
       .then((res) => {
-        console.log(res);
-        Cookies.set('token', res.token);
+        Cookies.set('token', res.Token);
+        console.log('set token in client', res.Token, Cookies.get('token'));
         showModal({
           title: 'login succeeded',
           onConfirm: () => {
-            // TODO: test, will delete
-            document.cookie = 'authToken=test';
             router.replace('/order');
           },
         });
