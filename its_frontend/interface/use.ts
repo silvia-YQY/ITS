@@ -1,8 +1,8 @@
 import { Order } from "./order";
 
 export enum RoleType {
-  User = 0,
-  Admin = 1,
+  user = "user",
+  admin = "admin",
 }
 
 export interface UserRegisterDto {
@@ -17,6 +17,12 @@ export interface UserLoginDto {
   password: string;
 }
 
+export interface UserResponseDto {
+  message: string;
+  token: string;
+  user: User;
+}
+
 export interface AuthResponse {
   token: string;
 }
@@ -25,7 +31,7 @@ export interface User {
   id: number;
   username: string;
   password: string;
-  role: RoleType;
+  isAdmin: RoleType;
   email: string;
   orders?: Order[]; // Assuming orders are linked
 }

@@ -1,8 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
-import type { MenuProps, MenuTheme } from "antd";
+import type { MenuProps } from "antd";
 import { Menu } from "antd";
 
 import {
@@ -11,14 +10,26 @@ import {
   SettingOutlined,
   DashboardOutlined,
 } from "@ant-design/icons";
+import { User } from "@/interface/use";
 type MenuItem = Required<MenuProps>["items"][number];
 
-const MenuComponent = ({ user, setUser }) => {
+const MenuComponent = ({ user }: { user: User }) => {
   const router = useRouter();
 
-  const [current, setCurrent] = useState("1");
+  const userItems: MenuItem[] = [
+    {
+      key: "car",
+      label: "Car",
+      icon: <AppstoreOutlined />,
+    },
+    {
+      key: "order",
+      label: "Order",
+      icon: <SettingOutlined />,
+    },
+  ];
 
-  const items: MenuItem[] = [
+  const adminItems: MenuItem[] = [
     {
       key: "user",
       label: "User",
@@ -51,7 +62,7 @@ const MenuComponent = ({ user, setUser }) => {
       theme="dark"
       defaultSelectedKeys={["1"]}
       mode="inline"
-      items={items}
+      items={user?.isAdmin ? adminItems : userItems}
     />
   );
 };

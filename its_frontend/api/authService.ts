@@ -1,8 +1,20 @@
 import axiosInstance from "@/lib/axiosInstance";
-import { UserLoginDto, UserRegisterDto, AuthResponse } from "@/interface/use";
+import {
+  UserLoginDto,
+  UserRegisterDto,
+  AuthResponse,
+  UserResponseDto,
+} from "@/interface/use";
 
-export const login = (data: UserLoginDto): Promise<AuthResponse> =>
-  axiosInstance.post("/api/Auth/login", data);
+export const login = async (data: UserLoginDto): Promise<UserResponseDto> => {
+  const response = await axiosInstance.post("/api/Auth/login", data);
+  return response.data as UserResponseDto;
+};
 
-export const register = (data: UserRegisterDto): Promise<AuthResponse> =>
-  axiosInstance.post("/api/Auth/register", data);
+export const register = async (
+  data: UserRegisterDto
+): Promise<AuthResponse> => {
+  const response = await axiosInstance.post("/api/Auth/register", data);
+
+  return response.data as UserResponseDto;
+};

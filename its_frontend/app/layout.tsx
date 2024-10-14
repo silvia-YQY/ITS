@@ -1,40 +1,33 @@
 "use client";
 import "../app/globals.css";
-import { Layout, Modal, Button, theme } from "antd";
-import Login from "@/app/components/LoginForm";
-import Register from "@/app/components/RegisterForm";
+import { Layout, theme } from "antd";
 import MenuComponent from "@/app/components/Menu";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import LoginModel from "./components/LoginModel";
+import { User } from "@/interface/use";
 
-const { Header, Content, Footer, Sider } = Layout;
+const { Content, Footer, Sider } = Layout;
 
 export default function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const [user, setUser] = useState(true); // User state to track if user is logged in
-  const [isModalVisible, setIsModalVisible] = useState(true); // Modal visibility state
-  const [isLoginView, setIsLoginView] = useState(true); // Toggle between login and register
+  const [user, setUser] = useState<User>(); // User state to track if user is logged in
 
   const [collapsed, setCollapsed] = useState(false);
+
   const {
     token: { colorBgContainer, borderRadiusLG },
   } = theme.useToken();
 
-  const showLogin = () => {
-    setIsLoginView(true);
-    setIsModalVisible(true);
-  };
-
-  const showRegister = () => {
-    setIsLoginView(false);
-    setIsModalVisible(true);
-  };
-
-  const handleCancel = () => {
-    setIsModalVisible(false);
-  };
+  useEffect(() => {
+    const storedUser = localStorage.getItem("user");
+    if (storedUser) {
+      const user = JSON.parse(storedUser); // Converts it back to an object
+      setUser(user);
+    }
+  }, []);
 
   return (
     <html lang="en">
@@ -42,37 +35,7 @@ export default function RootLayout({
         <Layout style={{ minHeight: "100vh" }}>
           {!user ? (
             <>
-              {/* Modal to switch between Login and Register */}
-              <Modal
-                visible={isModalVisible}
-                footer={null}
-                onCancel={handleCancel}
-                title={isLoginView ? "Login" : "Register"}
-              >
-                {isLoginView ? (
-                  <Login setUser={setUser} />
-                ) : (
-                  <Register setUser={setUser} />
-                )}
-                {/* Toggle between Login and Register */}
-                <div style={{ marginTop: "10px", textAlign: "center" }}>
-                  {isLoginView ? (
-                    <>
-                      Don't have an account?{" "}
-                      <Button type="link" onClick={showRegister}>
-                        Register here
-                      </Button>
-                    </>
-                  ) : (
-                    <>
-                      Already have an account?{" "}
-                      <Button type="link" onClick={showLogin}>
-                        Login here
-                      </Button>
-                    </>
-                  )}
-                </div>
-              </Modal>
+              <LoginModel setUser={setUser} />
             </>
           ) : (
             <Layout style={{ minHeight: "100vh" }}>
@@ -83,7 +46,7 @@ export default function RootLayout({
               >
                 <div className="demo-logo-vertical" />
                 {/* Menu and Main content displayed when the user is logged in */}
-                <MenuComponent user={user} setUser={setUser} />
+                <MenuComponent user={user} />
               </Sider>
               <Layout>
                 {/* <Header style={{ padding: 0, background: colorBgContainer }} /> */}

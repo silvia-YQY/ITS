@@ -11,6 +11,7 @@ import {
   OrderStatisticsResponse,
   TopUsersResponse,
 } from "@/interface/dashboard";
+import { Button, Card, Col, Row, Statistic } from "antd";
 
 const Dashboard: React.FC = () => {
   const [totalCars, setTotalCars] = useState<number>(0);
@@ -43,9 +44,28 @@ const Dashboard: React.FC = () => {
   return (
     <div>
       <h1>Car Park Dashboard</h1>
-      <p>Total Cars Parked: {totalCars}</p>
-      <p>Total Revenue: ${totalRevenue}</p>
-      <p>Pending Orders: {pendingOrders}</p>
+
+      <Row gutter={16}>
+        <Col span={12}>
+          <Card bordered={false}>
+            <Statistic title="Total Cars Parked" value={totalCars} loading />
+          </Card>
+        </Col>
+        <Col span={12}>
+          <Card bordered={false}>
+            <Statistic title="Pending Orders" value={pendingOrders} />
+          </Card>
+        </Col>
+        <Col span={12}>
+          <Card bordered={false}>
+            <Statistic
+              title="Total Revenue ($)"
+              value={totalRevenue}
+              precision={2}
+            />
+          </Card>
+        </Col>
+      </Row>
 
       {orderStats && (
         <div>

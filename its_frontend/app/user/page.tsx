@@ -165,7 +165,7 @@ const UserTable: React.FC = () => {
             name="email"
             rules={[{ required: true, message: "Please enter a valid email" }]}
           >
-            <Input type="email" />
+            <Input disabled={editingUser ? true : false} type="email" />
           </Form.Item>
         </Form>
       </Modal>
