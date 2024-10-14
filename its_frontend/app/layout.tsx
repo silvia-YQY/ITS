@@ -1,12 +1,13 @@
 "use client";
 import "../app/globals.css";
-import { Layout, theme } from "antd";
+import { Avatar, Badge, Flex, Layout, theme } from "antd";
 import MenuComponent from "@/app/components/Menu";
 import React, { useEffect, useState } from "react";
 import LoginModel from "./components/LoginModel";
 import { User } from "@/interface/use";
+import { UserOutlined } from "@ant-design/icons";
 
-const { Content, Footer, Sider } = Layout;
+const { Header, Content, Footer, Sider } = Layout;
 
 export default function RootLayout({
   children,
@@ -49,7 +50,16 @@ export default function RootLayout({
                 <MenuComponent user={user} />
               </Sider>
               <Layout>
-                {/* <Header style={{ padding: 0, background: colorBgContainer }} /> */}
+                <Header>
+                  <Flex gap="middle" align="flex-end" justify="flex-end">
+                    <a href="https://ant.design">
+                      <Avatar style={{ backgroundColor: "#f56a00" }}>
+                        <div>{user?.username}</div>
+                      </Avatar>
+                    </a>
+                  </Flex>
+                </Header>
+                {/* <Header  /> */}
                 <Content style={{ margin: "0 16px" }}>
                   <div
                     style={{

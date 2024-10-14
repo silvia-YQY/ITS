@@ -145,40 +145,30 @@ const OrderTable: React.FC = () => {
     {
       title: "Actions",
       key: "actions",
-      render: (text, record) => (
-        <>
-          <Button type="link" onClick={() => handleEdit(record)}>
-            Edit
-          </Button>
-          <Popconfirm
-            title="Are you sure to delete this order?"
-            onConfirm={() => handleDelete(record.id)}
-            okText="Yes"
-            cancelText="No"
-          >
-            <Button type="link" danger>
-              Delete
+      render: (text, record) => {
+        return (
+          <>
+            <Button type="link" onClick={() => handleEdit(record)}>
+              Edit
             </Button>
-          </Popconfirm>
-        </>
-      ),
+            <Popconfirm
+              title="Are you sure to delete this order?"
+              onConfirm={() => handleDelete(record.id)}
+              okText="Yes"
+              cancelText="No"
+            >
+              <Button type="link" danger>
+                Delete
+              </Button>
+            </Popconfirm>
+          </>
+        );
+      },
     },
   ];
 
   return (
     <div>
-      <Button
-        type="primary"
-        onClick={() => {
-          setEditingOrder(null);
-          form.resetFields();
-          setIsModalVisible(true);
-        }}
-        style={{ marginBottom: 16 }}
-      >
-        Add Order
-      </Button>
-
       <Table
         columns={columns}
         dataSource={orders}
@@ -207,14 +197,14 @@ const OrderTable: React.FC = () => {
             name="carId"
             rules={[{ required: true, message: "Please enter the car ID" }]}
           >
-            <Input type="number" />
+            <Input disabled type="number" />
           </Form.Item>
           <Form.Item
             label="User ID"
             name="userId"
             rules={[{ required: true, message: "Please enter the user ID" }]}
           >
-            <Input type="number" />
+            <Input disabled type="number" />
           </Form.Item>
           <Form.Item
             label="Start Time"
@@ -223,17 +213,17 @@ const OrderTable: React.FC = () => {
               { required: true, message: "Please select the start time" },
             ]}
           >
-            <DatePicker showTime />
+            <DatePicker disabled showTime />
           </Form.Item>
           <Form.Item label="End Time" name="endTime">
-            <DatePicker showTime />
+            <DatePicker disabled showTime />
           </Form.Item>
           <Form.Item
             label="Fee"
             name="fee"
             rules={[{ required: true, message: "Please enter the fee" }]}
           >
-            <Input type="number" />
+            <Input disabled type="number" />
           </Form.Item>
           <Form.Item label="Order Status" name="orderStatus">
             <Select>

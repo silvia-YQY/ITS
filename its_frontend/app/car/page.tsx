@@ -4,9 +4,12 @@ import { Table, Button, Modal, Form, Input, message, Popconfirm } from "antd";
 import type { ColumnsType } from "antd/es/table";
 import { getCarsByPage, addCar, updateCar, deleteCar } from "@/api/car";
 import { CarDto } from "@/interface/car";
+import { User } from "@/interface/use";
+import UploadCarPlate from "../components/uploadCarPlate";
 
 const CarTable: React.FC = () => {
   const [cars, setCars] = useState<CarDto[]>([]);
+  const [car, setCar] = useState<CarDto>();
   const [loading, setLoading] = useState(false);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [editingCar, setEditingCar] = useState<CarDto | null>(null);
@@ -33,22 +36,9 @@ const CarTable: React.FC = () => {
     fetchCars(page, pageSize);
   }, [page, pageSize]);
 
-  // Add or update car
-  const handleSubmit = async (values: Partial<CarDto>) => {
-    try {
-      if (editingCar) {
-        await updateCar(editingCar.id, values);
-        message.success("Car updated successfully");
-      } else {
-        await addCar(values);
-        message.success("Car added successfully");
-      }
-      fetchCars(page, pageSize);
-      setIsModalVisible(false);
-    } catch (error) {
-      message.error("Failed to save car");
-    }
-  };
+  useEffect(() => {
+    fetchCars(page, pageSize);
+  }, [car]);
 
   // Delete car
   const handleDelete = async (id: number) => {
@@ -68,13 +58,13 @@ const CarTable: React.FC = () => {
       dataIndex: "carPlate",
       key: "carPlate",
     },
-    {
-      title: "User Name",
-      key: "userName",
-      render: (_, record: CarDto) => {
-        return record.user?.username;
-      },
-    },
+    // {
+    //   title: "User Name",
+    //   key: "userName",
+    //   render: (_, record: CarDto) => {
+    //     return record.user?.username;
+    //   },
+    // },
     {
       title: "Actions",
       key: "actions",
@@ -113,7 +103,7 @@ const CarTable: React.FC = () => {
 
   return (
     <div>
-      <Button
+      {/* <Button
         type="primary"
         onClick={() => {
           setEditingCar(null);
@@ -123,7 +113,8 @@ const CarTable: React.FC = () => {
         style={{ marginBottom: 16 }}
       >
         Add Car
-      </Button>
+      </Button> */}
+      <UploadCarPlate setCar={setCar} />
 
       <Table
         columns={columns}
@@ -137,33 +128,6 @@ const CarTable: React.FC = () => {
           onChange: handlePageChange,
         }}
       />
-
-      <Modal
-        title={editingCar ? "Edit Car" : "Add Car"}
-        visible={isModalVisible}
-        onCancel={() => setIsModalVisible(false)}
-        onOk={() => form.submit()}
-      >
-        <Form form={form} onFinish={handleSubmit} layout="vertical">
-          <Form.Item
-            label="Car Plate"
-            name="carPlate"
-            rules={[{ required: true, message: "Please enter the car plate" }]}
-          >
-            <Input />
-          </Form.Item>
-          <Form.Item
-            label="User ID"
-            name="userId"
-            rules={[{ required: true, message: "Please enter the user ID" }]}
-          >
-            <Input type="number" />
-          </Form.Item>
-          <Form.Item label="Image URL" name="url">
-            <Input />
-          </Form.Item>
-        </Form>
-      </Modal>
     </div>
   );
 };
