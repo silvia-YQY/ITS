@@ -1,33 +1,59 @@
-import { NextApiRequest, NextApiResponse } from "next";
+import axios from "axios";
 
-export default async function handler(
-  req: NextApiRequest,
-  res: NextApiResponse
-) {
-  if (req.method === "POST") {
-    // Simulate file upload processing
-    await new Promise((resolve) => setTimeout(resolve, 1000));
-
-    // Generate a random car plate number
-    const randomPlate = `ABC${Math.floor(Math.random() * 1000)}XYZ`;
-
-    // Return a mock response similar to the third-party API
-    res.status(200).json({
-      msg: "Success!",
-      code: 200,
-      obj: {
-        id: Math.floor(Math.random() * 100),
-        fileName: req.body.fileName || "mock_file.jpg",
-        filePath: "/uploads/mock_file.jpg",
-        fileType: "jpg",
-        plate: randomPlate,
-        plateColor: "Blue",
-        tempPath: "/temp/mock_file.jpg",
-        recoPlate: `[${randomPlate}, Blue]`,
-      },
-      success: true,
-    });
-  } else {
-    res.status(405).json({ msg: "Method Not Allowed" });
-  }
+// 定义 obj 的类型
+interface Obj {
+  id: number;
+  fileName: string;
+  filePath: string;
+  fileType: string;
+  fileLength: number | null;
+  plate: string;
+  plateColor: string;
+  lastRecoTime: string | null;
+  tempPath: string;
+  recoPlate: string;
+  recoColor: string | null;
+  recoCorrect: string | null;
 }
+
+// 定义完整响应的类型
+interface PlateRecognitionResponse {
+  msg: string;
+  code: number;
+  obj: Obj;
+  success: boolean;
+}
+
+// 方法来上传车牌图片
+const recognisePlate = async (
+  file: File
+): Promise<PlateRecognitionResponse | null> => {
+  const formData = new FormData();
+  formData.append("image", file); // 添加文件到 formData 中
+
+  try {
+    const response = await axios.post<PlateRecognitionResponse>(
+      "http://localhost:16666/plate/recognise",
+      formData,
+      {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      }
+    );
+
+    // 处理返回的结果
+    if (response.data.success) {
+      console.log("识别成功:", response.data.obj);
+      return response.data; // 返回完整的响应
+    } else {
+      console.error("识别失败:", response.data.msg);
+      return null;
+    }
+  } catch (error) {
+    console.error("请求失败:", error);
+    return null;
+  }
+};
+
+export default recognisePlate;
