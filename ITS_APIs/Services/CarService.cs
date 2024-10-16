@@ -8,10 +8,14 @@ namespace ITS_APIs.Services
   public class CarService : ICarService
   {
     private readonly ITSDbContext _context;
+    private readonly IUserService _userService;
+    private readonly ILogger<CarService> _logger;
 
-    public CarService(ITSDbContext context)
+    public CarService(ITSDbContext context, ILogger<CarService> logger, IUserService userService)
     {
       _context = context;
+      _logger = logger;
+      _userService = userService;
     }
 
     public async Task<IEnumerable<Car>> GetAllCarsAsync()
@@ -33,6 +37,7 @@ namespace ITS_APIs.Services
       var items = await query.Skip((pageNumber - 1) * pageSize)
                               .Take(pageSize)
                               .ToListAsync();
+      _logger.LogInformation($"Total cars found: {totalCount}, Items: {items.Count}");
 
       return new PagedResultDto<Car>
       {
@@ -56,17 +61,42 @@ namespace ITS_APIs.Services
 
     }
 
-    public async Task<Car> CreateCarAsync(Car Car)
+    public async Task<Car> CreateCarAsync(Car car)
     {
-      _context.Cars.Add(Car);
-      await _context.SaveChangesAsync();
-      return Car;
+      var User = await _userService.UserExists(car.UserId);
+      if (User != null)
+      {
+
+        _context.Cars.Add(car);
+        await _context.SaveChangesAsync();
+      }
+      else
+      {
+        throw new KeyNotFoundException($"User Id {car.UserId} not found.");
+      }
+      return car;
+
     }
 
-    public async Task UpdateCarAsync(Car updatedCar, Car existingCar)
+    public async Task UpdateCarAsync(Car car)
     {
-      _context.Entry(existingCar).CurrentValues.SetValues(updatedCar);
-      await _context.SaveChangesAsync();
+      var existingCar = await GetCarByIdAsync(car.Id);
+      var User = await _userService.UserExists(car.UserId);
+      if (existingCar == null)
+      {
+        throw new KeyNotFoundException($"Car with Id {car.Id} does not exist");
+      }
+
+      if (User != null)
+      {
+        _context.Entry(existingCar).CurrentValues.SetValues(car);
+        await _context.SaveChangesAsync();
+      }
+      else
+      {
+        throw new KeyNotFoundException($"User Id {car.UserId} not found.");
+      }
+
 
     }
 

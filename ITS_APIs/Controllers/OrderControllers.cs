@@ -87,7 +87,6 @@ namespace ITS_APIs.Controllers
     {
       try
       {
-
         var createdOrder = await _orderService.CreateOrderAsync(order);
 
         var createOrderDtos = _mapper.Map<OrderDto>(createdOrder);
@@ -96,8 +95,7 @@ namespace ITS_APIs.Controllers
       }
       catch (Exception ex)
       {
-        _logger.LogError(ex, "An error occurred while processing create order.");
-        return StatusCode(StatusCodes.Status500InternalServerError, "An internal server error occurred.");
+        return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
       }
 
     }
@@ -155,7 +153,7 @@ namespace ITS_APIs.Controllers
       catch (Exception ex)
       {
         _logger.LogError(ex, "An unexpected error occurred while getting Order.");
-        return StatusCode(StatusCodes.Status500InternalServerError, "An unexpected error occurred.");
+        return StatusCode(StatusCodes.Status500InternalServerError, new { message = ex.Message });
       }
 
     }
@@ -166,11 +164,9 @@ namespace ITS_APIs.Controllers
     {
       try
       {
-        // searching for existing order
         var order = await _orderService.GetOrderByIdAsync(id);
         if (order == null)
         {
-          _logger.LogError($"Order with id {id} not found");
           return NotFound($"Order with id {id} not found");
         }
 
@@ -184,13 +180,13 @@ namespace ITS_APIs.Controllers
       }
       catch (DbUpdateException ex)
       {
-        _logger.LogError(ex, "Failed to update order status");
-        return StatusCode(StatusCodes.Status500InternalServerError, "Failed to update order status");
+
+        return StatusCode(StatusCodes.Status500InternalServerError, new { message = ex.Message });
       }
       catch (Exception ex)
       {
-        _logger.LogError(ex, "An unexpected error occurred");
-        return StatusCode(StatusCodes.Status500InternalServerError, "An unexpected error occurred");
+
+        return StatusCode(StatusCodes.Status500InternalServerError, new { message = ex.Message });
       }
     }
 

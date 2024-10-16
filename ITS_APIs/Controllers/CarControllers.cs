@@ -41,6 +41,7 @@ namespace ITS_APIs.Controllers
       {
         var cars = await _carService.GetPagedCarAsync(pageNumber, pageSize);
         var CarDtos = _mapper.Map<List<CarDto>>(cars.Items);
+        _logger.LogInformation($"Fetching cars with PageNumber: {pageNumber}, PageSize: {pageSize}");
 
         var pagedResult = new PagedResultDto<CarDto>
         {
@@ -54,9 +55,10 @@ namespace ITS_APIs.Controllers
       }
       catch (Exception ex)
       {
-        // 处理异常并记录日志
+
         _logger.LogError(ex, "An unexpected error occurred while getting all cars.");
-        return StatusCode(StatusCodes.Status500InternalServerError, "An unexpected error occurred.");
+        return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+
       }
     }
 
@@ -93,7 +95,7 @@ namespace ITS_APIs.Controllers
       catch (Exception error)
       {
 
-        return StatusCode(StatusCodes.Status500InternalServerError, error);
+        return StatusCode(StatusCodes.Status500InternalServerError, error.Message);
       }
     }
 
@@ -102,27 +104,21 @@ namespace ITS_APIs.Controllers
     [HttpPut("{id}")]
     public async Task<IActionResult> PutCar(int id, Car car)
     {
-      var existingCar = await _carService.GetCarByIdAsync(id);
       if (id != car.Id)
       {
         return BadRequest("Id mismatch");
       }
 
-      if (existingCar == null)
-      {
-        return StatusCode(StatusCodes.Status500InternalServerError, $"Car with Id {id} does not exist");
-      }
-
       try
       {
-        await _carService.UpdateCarAsync(car, existingCar);
+        await _carService.UpdateCarAsync(car);
 
         return Ok("Update successful");
       }
       catch (Exception ex)
       {
-        _logger.LogError(ex, "An error occurred while processing the request.");
-        return StatusCode(StatusCodes.Status500InternalServerError, "An error occurred while processing your request.");
+        _logger.LogInformation(ex, "An error occurred while processing the request.");
+        return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
       }
 
     }

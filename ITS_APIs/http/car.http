@@ -8,7 +8,7 @@ Accept: application/json
 ###
 
 ### Get a car by ID (Replace {id} with actual car ID)
-GET  {{ITS_URL}}/api/Car/1
+GET  {{ITS_URL}}/api/Car/15
 Accept: application/json
 
 ### Get a car list by page
@@ -20,23 +20,23 @@ Accept: application/json
 ### Create a new car
 POST  {{ITS_URL}}/api/Car
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1lIjoiYWRtaW4iLCJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9lbWFpbGFkZHJlc3MiOiIxMjM0QGV4YW1wbGUxLmNvbSIsImh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vd3MvMjAwOC8wNi9pZGVudGl0eS9jbGFpbXMvcm9sZSI6IkFkbWluIiwiZXhwIjoxNzI4ODUzMzkzLCJpc3MiOiJ5b3VyX2lzc3Vlcl9oZXJlIiwiYXVkIjoieW91cl9hdWRpZW5jZV9oZXJlIn0.lagH9IMFo9tNQEimJ_-o1GE6MTIw4Ey0Amt1i-le6tc
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1lIjoiYWRtaW4iLCJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9lbWFpbGFkZHJlc3MiOiIxMjM0QGV4YW1wbGUxLmNvbSIsImh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vd3MvMjAwOC8wNi9pZGVudGl0eS9jbGFpbXMvcm9sZSI6IkFkbWluIiwiZXhwIjoxNzI5MTIzNjUwLCJpc3MiOiJ5b3VyX2lzc3Vlcl9oZXJlIiwiYXVkIjoieW91cl9hdWRpZW5jZV9oZXJlIn0.AiVHrS8Vx2zZGL_kjMl32qS0lRwEno5PiZ6tfHKNRmA
 
 {
-  "carPlate": "ABC123456",
+  "carPlate": "ABC123",
   "url": "https://example.com/carimage.png",
-  "userId": 13
+  "userId": 22
 }
 
 ###
 
 ### Update an existing car (Replace {id} with actual car ID)
-PUT  {{ITS_URL}}/api/Car/1
+PUT  {{ITS_URL}}/api/Car/27
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1lIjoiYWRtaW4iLCJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9lbWFpbGFkZHJlc3MiOiIxMjM0QGV4YW1wbGUxLmNvbSIsImh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vd3MvMjAwOC8wNi9pZGVudGl0eS9jbGFpbXMvcm9sZSI6IkFkbWluIiwiZXhwIjoxNzI4ODUzMzkzLCJpc3MiOiJ5b3VyX2lzc3Vlcl9oZXJlIiwiYXVkIjoieW91cl9hdWRpZW5jZV9oZXJlIn0.lagH9IMFo9tNQEimJ_-o1GE6MTIw4Ey0Amt1i-le6tc
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1lIjoiYWRtaW4iLCJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9lbWFpbGFkZHJlc3MiOiIxMjM0QGV4YW1wbGUxLmNvbSIsImh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vd3MvMjAwOC8wNi9pZGVudGl0eS9jbGFpbXMvcm9sZSI6IkFkbWluIiwiZXhwIjoxNzI5MTIzNjUwLCJpc3MiOiJ5b3VyX2lzc3Vlcl9oZXJlIiwiYXVkIjoieW91cl9hdWRpZW5jZV9oZXJlIn0.AiVHrS8Vx2zZGL_kjMl32qS0lRwEno5PiZ6tfHKNRmA
 
 {
-  "id": 1,
+  "id": 27,
   "carPlate": "XYZ789",
   "url": "https://example.com/newcarimage.png",
   "userId": 13

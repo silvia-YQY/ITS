@@ -62,11 +62,20 @@ namespace ITS_APIs.Services
 
     }
 
-    public async Task<Order> CreateOrderAsync(Order Order)
+    public async Task<Order> CreateOrderAsync(Order order)
     {
-      _context.Orders.Add(Order);
+      var User = await _userService.UserExists(order.UserId);
+      var Car = await _carService.CarExists(order.CarId);
+
+      if (User == null)
+        throw new KeyNotFoundException($"User with ID {order.UserId} not found.");
+
+      if (Car == null)
+        throw new KeyNotFoundException($"Car with ID {order.CarId} not found.");
+
+      _context.Orders.Add(order);
       await _context.SaveChangesAsync();
-      return Order;
+      return order;
     }
 
     public async Task UpdateOrderAsync(Order order)
@@ -76,20 +85,20 @@ namespace ITS_APIs.Services
 
       if (existingOrder == null)
       {
-        throw new ArgumentException($"Order with Id {order.Id} does not exist");
+        throw new KeyNotFoundException($"Order with Id {order.Id} does not exist");
       }
 
-      var existingCar = await _carService.GetCarByIdAsync(order.CarId);
-      var existingUser = await _userService.GetUserByIdAsync(order.UserId);
+      var existingCar = await _carService.CarExists(order.CarId);
+      var existingUser = await _userService.UserExists(order.UserId);
 
       if (existingCar == null)
       {
-        throw new ArgumentException($"Car with Id {order.CarId} does not exist");
+        throw new KeyNotFoundException($"Car with Id {order.CarId} does not exist");
       }
 
       if (existingUser == null)
       {
-        throw new ArgumentException($"User with Id {order.UserId} does not exist");
+        throw new KeyNotFoundException($"User with Id {order.UserId} does not exist");
       }
 
 
@@ -135,6 +144,7 @@ namespace ITS_APIs.Services
 
     public async Task<Order?> UpdateOrderStatusAsync(Order order)
     {
+
       await _context.SaveChangesAsync();
       return order;
     }
