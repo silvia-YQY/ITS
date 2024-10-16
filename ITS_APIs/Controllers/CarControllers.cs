@@ -57,7 +57,7 @@ namespace ITS_APIs.Controllers
       {
 
         _logger.LogError(ex, "An unexpected error occurred while getting all cars.");
-        return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+        return StatusCode(StatusCodes.Status500InternalServerError, new { message = ex.Message });
 
       }
     }
@@ -118,7 +118,7 @@ namespace ITS_APIs.Controllers
       catch (Exception ex)
       {
         _logger.LogInformation(ex, "An error occurred while processing the request.");
-        return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+        return StatusCode(StatusCodes.Status500InternalServerError, new { message = ex.Message });
       }
 
     }
@@ -143,7 +143,7 @@ namespace ITS_APIs.Controllers
       {
 
         _logger.LogError(ex, "An unexpected error occurred while getting Car.");
-        return StatusCode(StatusCodes.Status500InternalServerError, "An unexpected error occurred.");
+        return StatusCode(StatusCodes.Status500InternalServerError, new { message = ex.Message });
       }
     }
   }
