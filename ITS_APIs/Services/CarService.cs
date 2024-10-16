@@ -183,22 +183,32 @@ namespace ITS_APIs.Services
       }
     }
 
-    public async Task<PagedResultDto<Car>> GetPagedCarsByUserAsync(int userId, ClaimsPrincipal user, int pageNumber, int pageSize)
+    public async Task<PagedResultDto<Car>> GetPagedCarsByUserAsync(string userId, ClaimsPrincipal user, int pageNumber, int pageSize)
     {
       // get user role from  Claims 
       var userRole = user.FindFirst(ClaimTypes.Role)?.Value;
+
       // create base sql
       var query = _context.Cars
                           .Include(c => c.User)
                           .AsQueryable();
 
-      _logger.LogInformation("User role is: {UserRole}", userRole);
+      _logger.LogInformation("User role is: {userId1}:{}", userId, userId);
 
 
       // not admin, filter current user data 
       if (userRole != "Admin")
       {
-        query = query.Where(c => c.UserId == userId);
+        int parsedUserId;
+        if (int.TryParse(userId, out parsedUserId))
+        {
+          query = query.Where(c => c.UserId == parsedUserId);
+        }
+        else
+        {
+          // 处理无法转换为 int 的情况，比如记录日志或抛出异常
+          _logger.LogError("Invalid UserId format");
+        }
       }
 
 

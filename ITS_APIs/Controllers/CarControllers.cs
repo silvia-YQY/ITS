@@ -7,6 +7,7 @@ using ITS_APIs.Services;
 using AutoMapper;
 using ITS_APIs.DTOs;
 using Microsoft.AspNetCore.Authorization;
+using System.Security.Claims;
 
 namespace ITS_APIs.Controllers
 {
@@ -169,7 +170,9 @@ namespace ITS_APIs.Controllers
     {
       try
       {
-        var userId = int.Parse(User.Identity.Name); // 获取当前用户的 ID
+        // var userId = int.Parse(User.Identity.Name); // 获取当前用户的 ID
+        var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
         var cars = await _carService.GetPagedCarsByUserAsync(userId, User, pageNumber, pageSize);
         var carDtos = _mapper.Map<List<CarDto>>(cars.Items);
 

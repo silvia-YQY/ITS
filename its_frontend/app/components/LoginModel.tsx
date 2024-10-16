@@ -32,36 +32,49 @@ const LoginModel = ({ setUser }) => {
 
   if (!isMounted) return null;
   return (
-    <Modal
-      open={isModalVisible}
-      footer={null}
-      onCancel={handleCancel}
-      title={isLoginView ? "Login" : "Register"}
+    <div
+      style={{
+        backgroundImage: "url('/images/1.webp')", // 背景图片路径
+        backgroundSize: "cover", // 让图片覆盖整个背景
+        backgroundPosition: "center", // 图片居中显示
+        height: "100vh", // 背景图全屏
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+      }}
     >
-      {isLoginView ? (
-        <Login setUser={setUser} />
-      ) : (
-        <Register setUser={setUser} />
-      )}
-      {/* Toggle between Login and Register */}
-      <div style={{ marginTop: "10px", textAlign: "center" }}>
+      <Modal
+        open={isModalVisible}
+        footer={null}
+        onCancel={handleCancel}
+        title={isLoginView ? "Login" : "Register"}
+        maskStyle={{ backgroundColor: "rgba(0, 0, 0, 0.5)" }} // 设置遮罩层透明度
+      >
         {isLoginView ? (
-          <>
-            Don't have an account?
-            <Button type="link" onClick={showRegister}>
-              Register here
-            </Button>
-          </>
+          <Login setUser={setUser} />
         ) : (
-          <>
-            Already have an account?
-            <Button type="link" onClick={showLogin}>
-              Login here
-            </Button>
-          </>
+          <Register setUser={setUser} />
         )}
-      </div>
-    </Modal>
+        {/* Toggle between Login and Register */}
+        <div style={{ marginTop: "10px", textAlign: "center" }}>
+          {isLoginView ? (
+            <>
+              Don't have an account?
+              <Button type="link" onClick={showRegister}>
+                Register here
+              </Button>
+            </>
+          ) : (
+            <>
+              Already have an account?
+              <Button type="link" onClick={showLogin}>
+                Login here
+              </Button>
+            </>
+          )}
+        </div>
+      </Modal>
+    </div>
   );
 };
 

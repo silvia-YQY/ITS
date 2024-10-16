@@ -17,11 +17,14 @@ export default function RootLayout({
   const [user, setUser] = useState<User>(); // User state to track if user is logged in
   const [collapsed, setCollapsed] = useState(false);
   const router = useRouter();
+  const refreshPage = () => {
+    window.location.reload();
+  };
 
   const handleLogout = () => {
     localStorage.removeItem("token");
     localStorage.removeItem("user");
-    router.push("/login");
+    refreshPage();
   };
 
   useEffect(() => {

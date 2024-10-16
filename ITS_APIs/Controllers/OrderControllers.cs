@@ -5,6 +5,7 @@ using AutoMapper;
 using ITS_APIs.DTOs;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
+using System.Security.Claims;
 
 namespace ITS_APIs.Controllers
 {
@@ -195,7 +196,9 @@ namespace ITS_APIs.Controllers
     {
       try
       {
-        var userId = int.Parse(User.Identity.Name); // 获取当前用户的 ID
+        // var userId = int.Parse(User.Identity.Name); // 获取当前用户的 ID
+        var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
         var orders = await _orderService.GetPagedOrdersByUserAsync(userId, User, pageNumber, pageSize);
         var orderDtos = _mapper.Map<List<OrderDto>>(orders.Items);
 

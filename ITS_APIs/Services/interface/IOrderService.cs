@@ -19,6 +19,6 @@ namespace ITS_APIs.Services
 
     decimal CalculateRentalFee(Order order);
 
-    Task<PagedResultDto<Order>> GetPagedOrdersByUserAsync(int userId, ClaimsPrincipal user, int pageNumber, int pageSize);
+    Task<PagedResultDto<Order>> GetPagedOrdersByUserAsync(string userId, ClaimsPrincipal user, int pageNumber, int pageSize);
   }
 }

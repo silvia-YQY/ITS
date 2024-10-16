@@ -20,18 +20,23 @@ const Register = ({ setUser }) => {
         ...values,
       });
 
-      const user = await login({
-        email: values.email,
-        password: values.password,
+      messageApi.open({
+        type: "success",
+        content: `Registered. Please Login.`,
       });
 
-      setUser({
-        username: user.user.username,
-        email: user.user.email,
-        isAdmin: user.user.isAdmin,
-        token: user.token,
-      });
-      router.push("/order");
+      // const user = await login({
+      //   email: values.email,
+      //   password: values.password,
+      // });
+
+      // setUser({
+      //   username: user.user.username,
+      //   email: user.user.email,
+      //   isAdmin: user.user.isAdmin,
+      //   token: user.token,
+      // });
+      router.push("/login");
     } catch (error) {
       console.log("errors", error);
 

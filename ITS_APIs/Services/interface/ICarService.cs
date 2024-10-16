@@ -19,6 +19,6 @@ namespace ITS_APIs.Services
     Task<bool> CheckCarPlate(Car car);
     Task<Car?> CarExists(int id);
 
-    Task<PagedResultDto<Car>> GetPagedCarsByUserAsync(int userId, ClaimsPrincipal user, int pageNumber, int pageSize);
+    Task<PagedResultDto<Car>> GetPagedCarsByUserAsync(string userId, ClaimsPrincipal user, int pageNumber, int pageSize);
   }
 }

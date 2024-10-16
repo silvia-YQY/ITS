@@ -152,7 +152,7 @@ namespace ITS_APIs.Services
       return order;
     }
 
-    public async Task<PagedResultDto<Order>> GetPagedOrdersByUserAsync(int userId, ClaimsPrincipal user, int pageNumber, int pageSize)
+    public async Task<PagedResultDto<Order>> GetPagedOrdersByUserAsync(string userId, ClaimsPrincipal user, int pageNumber, int pageSize)
     {
 
       // get user role from  Claims 
@@ -164,13 +164,21 @@ namespace ITS_APIs.Services
                           .Include(o => o.Car)
                           .AsQueryable();
 
-      _logger.LogInformation("User role is: {UserRole}", userRole);
+
 
 
       // not admin, filter current user data 
       if (userRole != "Admin")
       {
-        query = query.Where(c => c.UserId == userId);
+        int parsedUserId;
+        if (int.TryParse(userId, out parsedUserId))
+        {
+          query = query.Where(c => c.UserId == parsedUserId);
+          {
+            // 处理无法转换为 int 的情况，比如记录日志或抛出异常
+            _logger.LogError("Invalid UserId format");
+          }
+        }
       }
 
 
@@ -196,7 +204,7 @@ namespace ITS_APIs.Services
       var totalHours = (order.EndTime - order.StartTime).TotalHours;
 
       // Multiply the total hours by the rate (e.g., 5 per hour)
-      return 5 * (decimal)totalHours;
+      return 50 * (decimal)totalHours;
     }
   }
 }
