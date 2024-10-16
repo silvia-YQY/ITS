@@ -1,6 +1,6 @@
 // services/api.ts
 
-import { UserDto, UserDtoPagedResultDto } from "@/interface/use";
+import { UserDtoPagedResultDto, UserRegisterDto } from "@/interface/use";
 import axiosInstance from "@/lib/axiosInstance";
 
 export const getUsersByPage = async (page: number, pageSize: number) => {
@@ -16,7 +16,7 @@ export const getUsersByPage = async (page: number, pageSize: number) => {
 };
 
 // Create New Order
-export const addUser = async (user: UserDto) => {
+export const addUser = async (user: UserRegisterDto) => {
   try {
     return axiosInstance.post("/api/User", user);
   } catch (error) {
@@ -25,7 +25,7 @@ export const addUser = async (user: UserDto) => {
   }
 };
 
-export const updateUser = async (id: number, user: UserDto) => {
+export const updateUser = async (id: number, user: UserRegisterDto) => {
   try {
     return axiosInstance.put(`/api/User/${id}`, user);
   } catch (error) {

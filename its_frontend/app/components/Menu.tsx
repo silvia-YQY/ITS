@@ -60,7 +60,7 @@ const MenuComponent = ({ user }: { user: User }) => {
     <Menu
       onClick={handleMenuClick}
       theme="dark"
-      defaultSelectedKeys={["1"]}
+      defaultOpenKeys={["order"]}
       mode="inline"
       items={user?.isAdmin ? adminItems : userItems}
     />

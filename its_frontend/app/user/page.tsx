@@ -4,7 +4,7 @@ import React, { useState, useEffect } from "react";
 import { Table, Button, Modal, Form, Input, message, Popconfirm } from "antd";
 import type { ColumnsType } from "antd/es/table";
 import { getUsersByPage, addUser, updateUser, deleteUser } from "@/api/user";
-import { UserDto } from "@/interface/use";
+import { UserDto, UserRegisterDto } from "@/interface/use";
 
 const UserTable: React.FC = () => {
   const [users, setUsers] = useState<UserDto[]>([]);
@@ -35,13 +35,13 @@ const UserTable: React.FC = () => {
   }, [page, pageSize]);
 
   // Add or update user
-  const handleSubmit = async (values: UserDto) => {
+  const handleSubmit = async (values: Partial<UserRegisterDto>) => {
     try {
       if (editingUser) {
         await updateUser(editingUser.id, values);
         message.success("User updated successfully");
       } else {
-        await addUser(values);
+        await addUser({ ...values, role: "user" });
         message.success("User added successfully");
       }
       fetchUsers(page, pageSize);
@@ -113,17 +113,17 @@ const UserTable: React.FC = () => {
 
   return (
     <div>
-      <Button
+      {/* <Button
         type="primary"
         onClick={() => {
           setEditingUser(null);
           form.resetFields();
           setIsModalVisible(true);
         }}
-        style={{ marginBottom: 16 }}
+        style={{ margin: 16 }}
       >
         Add User
-      </Button>
+      </Button> */}
 
       <Table
         columns={columns}
@@ -147,12 +147,7 @@ const UserTable: React.FC = () => {
         onCancel={() => setIsModalVisible(false)}
         onOk={() => form.submit()}
       >
-        <Form
-          form={form}
-          disabled={true}
-          onFinish={handleSubmit}
-          layout="vertical"
-        >
+        <Form form={form} onFinish={handleSubmit} layout="vertical">
           <Form.Item
             label="Username"
             name="username"
@@ -166,6 +161,13 @@ const UserTable: React.FC = () => {
             rules={[{ required: true, message: "Please enter a valid email" }]}
           >
             <Input disabled={editingUser ? true : false} type="email" />
+          </Form.Item>
+          <Form.Item
+            label="Password"
+            name="password"
+            rules={[{ required: true, message: "Please enter a Password" }]}
+          >
+            <Input.Password type="email" />
           </Form.Item>
         </Form>
       </Modal>

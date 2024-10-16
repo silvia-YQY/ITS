@@ -1,6 +1,15 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import { Table, Button, Modal, Form, Input, message, Popconfirm } from "antd";
+import {
+  Table,
+  Button,
+  Modal,
+  Form,
+  Input,
+  message,
+  Popconfirm,
+  Flex,
+} from "antd";
 import type { ColumnsType } from "antd/es/table";
 import { getCarsByPage, addCar, updateCar, deleteCar } from "@/api/car";
 import { CarDto } from "@/interface/car";
@@ -101,20 +110,42 @@ const CarTable: React.FC = () => {
     setPageSize(pageSize);
   };
 
+  const handleLog = async (status: "login" | "logout", carPlate: string) => {
+    const storedUser = localStorage.getItem("user");
+    if (!storedUser) {
+      message.error("please login first");
+      return;
+    }
+    const use = JSON.parse(storedUser);
+
+    console.log("handleLoginCar==>", status, carPlate);
+    if (status === "login") {
+      await addCar({
+        carPlate: carPlate!,
+        url: "https://cdn.pixabay.com/photo/2023/02/07/17/49/supercar-7774683_640.jpg",
+        userId: use.id,
+      });
+    }
+
+    if (status === "logout") {
+      await addCar({
+        carPlate: carPlate!,
+        url: "https://cdn.pixabay.com/photo/2023/02/07/17/49/supercar-7774683_640.jpg",
+        userId: use.id,
+      });
+    }
+  };
+
   return (
     <div>
-      {/* <Button
-        type="primary"
-        onClick={() => {
-          setEditingCar(null);
-          form.resetFields();
-          setIsModalVisible(true);
-        }}
-        style={{ marginBottom: 16 }}
-      >
-        Add Car
-      </Button> */}
-      <UploadCarPlate setCar={setCar} />
+      <Flex justify="start-end">
+        <UploadCarPlate
+          callback={(carPlate: string) => handleLog("login", carPlate)}
+        />
+        <UploadCarPlate
+          callback={(carPlate: string) => handleLog("logout", carPlate)}
+        />
+      </Flex>
 
       <Table
         columns={columns}

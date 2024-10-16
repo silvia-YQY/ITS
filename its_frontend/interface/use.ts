@@ -9,7 +9,7 @@ export interface UserRegisterDto {
   username: string;
   email: string;
   password: string;
-  isAdmin: RoleType; // Assuming 0 = User, 1 = Admin
+  role: RoleType;
 }
 
 export interface UserLoginDto {

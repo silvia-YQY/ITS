@@ -66,9 +66,9 @@ const Register = ({ setUser }) => {
         </Form.Item>
         <Form.Item label="Radio" name="isAdmin">
           <Radio.Group>
-            <Radio defaultChecked={false} value="admin">
+            {/* <Radio defaultChecked={false} value="admin">
               Admin
-            </Radio>
+            </Radio> */}
             <Radio defaultChecked value="user">
               User
             </Radio>

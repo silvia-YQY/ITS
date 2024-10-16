@@ -2,10 +2,8 @@
 import { Upload, Button, Modal, message } from "antd";
 import { UploadOutlined } from "@ant-design/icons";
 import React, { useEffect, useState } from "react";
-import { User } from "@/interface/use";
-import { addCar, updateCar } from "@/api/car";
 
-const UploadCarPlate: React.FC = ({ setCar }) => {
+const UploadCarPlate: React.FC = ({ callback }) => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [carPlate, setCarPlate] = useState<string | null>(null);
 
@@ -46,39 +44,14 @@ const UploadCarPlate: React.FC = ({ setCar }) => {
 
   useEffect(() => {
     if (carPlate) {
-      setCar(carPlate);
-      handleSubmit();
+      callback(carPlate);
     }
   }, [carPlate]);
-
-  const handleSubmit = async () => {
-    const storedUser = localStorage.getItem("user");
-
-    try {
-      if (storedUser) {
-        const user = JSON.parse(storedUser) as User;
-        await addCar({
-          carPlate: carPlate!,
-          url: "https://cdn.pixabay.com/photo/2023/02/07/17/49/supercar-7774683_640.jpg",
-          userId: user.id,
-        });
-        message.success("Car added successfully");
-      } else {
-        message.error("please login first");
-      }
-    } catch (error) {
-      message.error("Failed to save car");
-    }
-  };
 
   return (
     <div>
       <Upload {...props}>
-        <Button
-          type="primary"
-          style={{ marginBottom: 16 }}
-          icon={<UploadOutlined />}
-        >
+        <Button type="primary" style={{ margin: 16 }} icon={<UploadOutlined />}>
           Upload Car Photo
         </Button>
       </Upload>

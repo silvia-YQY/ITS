@@ -1,11 +1,11 @@
 "use client";
 import "../app/globals.css";
-import { Avatar, Badge, Flex, Layout, theme } from "antd";
+import { Avatar, Badge, Flex, Layout, Popconfirm, theme } from "antd";
 import MenuComponent from "@/app/components/Menu";
 import React, { useEffect, useState } from "react";
 import LoginModel from "./components/LoginModel";
 import { User } from "@/interface/use";
-import { UserOutlined } from "@ant-design/icons";
+import { useRouter } from "next/navigation";
 
 const { Header, Content, Footer, Sider } = Layout;
 
@@ -17,10 +17,13 @@ export default function RootLayout({
   const [user, setUser] = useState<User>(); // User state to track if user is logged in
 
   const [collapsed, setCollapsed] = useState(false);
+  const router = useRouter();
 
-  const {
-    token: { colorBgContainer, borderRadiusLG },
-  } = theme.useToken();
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+    router.push("/login");
+  };
 
   useEffect(() => {
     const storedUser = localStorage.getItem("user");
@@ -39,46 +42,42 @@ export default function RootLayout({
               <LoginModel setUser={setUser} />
             </>
           ) : (
-            <Layout style={{ minHeight: "100vh" }}>
-              <Sider
-                collapsible
-                collapsed={collapsed}
-                onCollapse={(value) => setCollapsed(value)}
-              >
-                <div className="demo-logo-vertical" />
-                {/* Menu and Main content displayed when the user is logged in */}
-                <MenuComponent user={user} />
-              </Sider>
-              <Layout>
-                <Header>
-                  <Flex gap="middle" align="flex-end" justify="flex-end">
-                    <a href="https://ant.design">
+            <Layout>
+              <Header>
+                <Flex gap="middle" align="flex-end" justify="flex-end">
+                  <a>
+                    <Popconfirm
+                      title="Do you want to log out?"
+                      onConfirm={handleLogout}
+                      okText="Yes"
+                      cancelText="No"
+                    >
                       <Avatar style={{ backgroundColor: "#f56a00" }}>
                         <div>{user?.username}</div>
                       </Avatar>
-                    </a>
-                  </Flex>
-                </Header>
-                {/* <Header  /> */}
-                <Content style={{ margin: "0 16px" }}>
-                  <div
-                    style={{
-                      padding: 24,
-                      minHeight: 360,
-                      background: colorBgContainer,
-                      borderRadius: borderRadiusLG,
-                    }}
-                  >
-                    {children}
-                  </div>
+                    </Popconfirm>
+                  </a>
+                </Flex>
+              </Header>
+              <Layout>
+                <Sider
+                  collapsible
+                  collapsed={collapsed}
+                  onCollapse={(value) => setCollapsed(value)}
+                >
+                  <div className="demo-logo-vertical" />
+                  {/* Menu and Main content displayed when the user is logged in */}
+                  <MenuComponent user={user} />
+                </Sider>
+                <Content style={{ margin: "0 20px" }}>
+                  <div>{children}</div>
                 </Content>
-                <Footer style={{ textAlign: "center" }}>
-                  Car Parking System ©2024
-                </Footer>
               </Layout>
+              <Footer style={{ textAlign: "center" }}>
+                Car Parking System ©2024
+              </Footer>
             </Layout>
           )}
-          {/* Footer */}
         </Layout>
       </body>
     </html>
