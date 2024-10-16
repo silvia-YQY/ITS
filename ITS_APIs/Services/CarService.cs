@@ -1,3 +1,4 @@
+using System.Security.Claims;
 using ITS_APIs.DTOs;
 using ITS_APIs.Enums;
 using ITS_APIs.Models;
@@ -181,6 +182,40 @@ namespace ITS_APIs.Services
         return existingCar; // Return the existing car
       }
     }
+
+    public async Task<PagedResultDto<Car>> GetPagedCarsByUserAsync(int userId, ClaimsPrincipal user, int pageNumber, int pageSize)
+    {
+      // get user role from  Claims 
+      var userRole = user.FindFirst(ClaimTypes.Role)?.Value;
+      // create base sql
+      var query = _context.Cars
+                          .Include(c => c.User)
+                          .AsQueryable();
+
+      _logger.LogInformation("User role is: {UserRole}", userRole);
+
+
+      // not admin, filter current user data 
+      if (userRole != "Admin")
+      {
+        query = query.Where(c => c.UserId == userId);
+      }
+
+
+      var totalCount = await query.CountAsync();
+      var items = await query.Skip((pageNumber - 1) * pageSize)
+                            .Take(pageSize)
+                            .ToListAsync();
+
+      return new PagedResultDto<Car>
+      {
+        Items = items,
+        TotalCount = totalCount,
+        PageNumber = pageNumber,
+        PageSize = pageSize
+      };
+    }
+
 
 
     public async Task<Car?> CarExists(int id)

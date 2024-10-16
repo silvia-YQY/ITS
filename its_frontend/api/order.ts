@@ -9,7 +9,7 @@ export const fetchOrderById = (id: number): Promise<Order> =>
   axiosInstance.get(`/api/Order/${id}`);
 
 export const getOrdersByPage = async (page: number, pageSize: number) => {
-  const response = await axiosInstance.get(`/api/Order/allByPage`, {
+  const response = await axiosInstance.get(`/api/Order/userOrders`, {
     params: { page, pageSize },
   });
   return response.data as OrderDtoPagedResultDto;

@@ -1,3 +1,4 @@
+using System.Security.Claims;
 using ITS_APIs.DTOs;
 using ITS_APIs.Models;
 using ITS_APIs.Services;
@@ -10,13 +11,15 @@ namespace ITS_APIs.Services
     private readonly ITSDbContext _context;
     // private readonly ICarService _carService;
     private readonly IUserService _userService;
-
-    public OrderService(ITSDbContext context,
+    private readonly ILogger<OrderService> _logger;
+    public OrderService(ITSDbContext context, ILogger<OrderService> logger,
     IUserService userService)
     {
       _context = context;
       // _carService = carService;
       _userService = userService;
+      _logger = logger;
+
     }
 
     public async Task<IEnumerable<Order>> GetAllOrdersAsync()
@@ -148,6 +151,43 @@ namespace ITS_APIs.Services
       await _context.SaveChangesAsync();
       return order;
     }
+
+    public async Task<PagedResultDto<Order>> GetPagedOrdersByUserAsync(int userId, ClaimsPrincipal user, int pageNumber, int pageSize)
+    {
+
+      // get user role from  Claims 
+      var userRole = user.FindFirst(ClaimTypes.Role)?.Value;
+
+      // create base sql
+      var query = _context.Orders
+                          .Include(c => c.User)
+                          .Include(o => o.Car)
+                          .AsQueryable();
+
+      _logger.LogInformation("User role is: {UserRole}", userRole);
+
+
+      // not admin, filter current user data 
+      if (userRole != "Admin")
+      {
+        query = query.Where(c => c.UserId == userId);
+      }
+
+
+      var totalCount = await query.CountAsync();
+      var items = await query.Skip((pageNumber - 1) * pageSize)
+                            .Take(pageSize)
+                            .ToListAsync();
+
+      return new PagedResultDto<Order>
+      {
+        Items = items,
+        TotalCount = totalCount,
+        PageNumber = pageNumber,
+        PageSize = pageSize
+      };
+    }
+
 
 
     public decimal CalculateRentalFee(Order order)

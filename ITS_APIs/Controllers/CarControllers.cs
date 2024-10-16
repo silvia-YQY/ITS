@@ -164,6 +164,31 @@ namespace ITS_APIs.Controllers
         return StatusCode(StatusCodes.Status500InternalServerError, new { message = ex.Message });
       }
     }
+    [HttpGet("userCars")]
+    public async Task<ActionResult<PagedResultDto<CarDto>>> GetCarsByUser([FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 10)
+    {
+      try
+      {
+        var userId = int.Parse(User.Identity.Name); // 获取当前用户的 ID
+        var cars = await _carService.GetPagedCarsByUserAsync(userId, User, pageNumber, pageSize);
+        var carDtos = _mapper.Map<List<CarDto>>(cars.Items);
+
+        var pagedResult = new PagedResultDto<CarDto>
+        {
+          Items = carDtos,
+          TotalCount = cars.TotalCount,
+          PageNumber = pageNumber,
+          PageSize = pageSize
+        };
+
+        return Ok(pagedResult);
+      }
+      catch (Exception ex)
+      {
+        _logger.LogError(ex, "An error occurred while fetching user cars.");
+        return StatusCode(500, "An error occurred while processing your request.");
+      }
+    }
 
   }
 }

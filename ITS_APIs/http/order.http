@@ -1,4 +1,5 @@
 @ITS_URL = http://localhost:5288
+@Authorization = Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1lIjoiMiIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL2VtYWlsYWRkcmVzcyI6IjJAMi5jb20iLCJodHRwOi8vc2NoZW1hcy5taWNyb3NvZnQuY29tL3dzLzIwMDgvMDYvaWRlbnRpdHkvY2xhaW1zL3JvbGUiOiJBZG1pbiIsImV4cCI6MTcyOTE0MDAwMSwiaXNzIjoieW91cl9pc3N1ZXJfaGVyZSIsImF1ZCI6InlvdXJfYXVkaWVuY2VfaGVyZSJ9.DyBrEISpUicoW51lncVsMjgD3Ssz27ItYjYXTC3Rx38
 
 ### Get all orders
 GET {{ITS_URL}}/api/Order
@@ -7,6 +8,10 @@ Accept: application/json
 ### Get a car list by page
 GET {{ITS_URL}}/api/Order/allByPage?pageNumber=1&pageSize=3
 Accept: application/json
+
+### 获取当前用户相关的订单列表 - 测试第一页
+GET {{ITS_URL}}/api/Order/userOrders?pageNumber=1&pageSize=5
+Authorization: {{Authorization}}
 
 ###
 

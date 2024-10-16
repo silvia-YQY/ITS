@@ -190,5 +190,31 @@ namespace ITS_APIs.Controllers
       }
     }
 
+    [HttpGet("userOrders")]
+    public async Task<ActionResult<PagedResultDto<OrderDto>>> GetOrdersByUser([FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 10)
+    {
+      try
+      {
+        var userId = int.Parse(User.Identity.Name); // 获取当前用户的 ID
+        var orders = await _orderService.GetPagedOrdersByUserAsync(userId, User, pageNumber, pageSize);
+        var orderDtos = _mapper.Map<List<OrderDto>>(orders.Items);
+
+        var pagedResult = new PagedResultDto<OrderDto>
+        {
+          Items = orderDtos,
+          TotalCount = orders.TotalCount,
+          PageNumber = pageNumber,
+          PageSize = pageSize
+        };
+
+        return Ok(pagedResult);
+      }
+      catch (Exception ex)
+      {
+        _logger.LogError(ex, "An error occurred while fetching user orders.");
+        return StatusCode(500, "An error occurred while processing your request.");
+      }
+    }
+
   }
 }

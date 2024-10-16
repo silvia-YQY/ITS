@@ -84,6 +84,11 @@ const UserTable: React.FC = () => {
       key: "username",
     },
     {
+      title: "Role",
+      dataIndex: "role",
+      key: "role",
+    },
+    {
       title: "Email",
       dataIndex: "email",
       key: "email",

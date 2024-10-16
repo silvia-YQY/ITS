@@ -5,7 +5,7 @@ export const fetchCars = (): Promise<Car[]> => axiosInstance.get("/api/Car");
 
 // Fetch cars with pagination
 export const getCarsByPage = async (pageNumber: number, pageSize: number) => {
-  const response = await axiosInstance.get(`/api/Car/allByPage`, {
+  const response = await axiosInstance.get(`/api/Car/userCars`, {
     params: { pageNumber, pageSize },
   });
   return response.data as CarDtoPagedResultDto;
