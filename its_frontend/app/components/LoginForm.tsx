@@ -21,6 +21,7 @@ const Login = ({ setUser }) => {
         email: user.user.email,
         isAdmin: user.user.isAdmin,
         token: user.token,
+        id: user.user.id,
       };
 
       setUser(userData);

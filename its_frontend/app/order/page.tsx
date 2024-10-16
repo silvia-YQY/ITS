@@ -99,9 +99,18 @@ const OrderTable: React.FC = () => {
       key: "carId",
     },
     {
-      title: "User ID",
-      dataIndex: "userId",
-      key: "userId",
+      title: "User Name",
+      key: "userName",
+      render: (_, record: OrderDto) => {
+        return record.userName;
+      },
+    },
+    {
+      title: "Car Plate",
+      key: "carPlate",
+      render: (_, record: OrderDto) => {
+        return record.carPlate;
+      },
     },
     {
       title: "Start Time",
@@ -121,6 +130,7 @@ const OrderTable: React.FC = () => {
       title: "Fee",
       dataIndex: "fee",
       key: "fee",
+      render: (fee: number) => fee.toFixed(2),
     },
     {
       title: "Order Status",

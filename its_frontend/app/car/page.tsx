@@ -15,6 +15,7 @@ import { getCarsByPage, addCar, updateCar, deleteCar } from "@/api/car";
 import { CarDto } from "@/interface/car";
 import { User } from "@/interface/use";
 import UploadCarPlate from "../components/uploadCarPlate";
+import { loginOrder } from "@/api/order";
 
 const CarTable: React.FC = () => {
   const [cars, setCars] = useState<CarDto[]>([]);
@@ -43,11 +44,7 @@ const CarTable: React.FC = () => {
 
   useEffect(() => {
     fetchCars(page, pageSize);
-  }, [page, pageSize]);
-
-  useEffect(() => {
-    fetchCars(page, pageSize);
-  }, [car]);
+  }, [page, pageSize, car]);
 
   // Delete car
   const handleDelete = async (id: number) => {
@@ -67,13 +64,13 @@ const CarTable: React.FC = () => {
       dataIndex: "carPlate",
       key: "carPlate",
     },
-    // {
-    //   title: "User Name",
-    //   key: "userName",
-    //   render: (_, record: CarDto) => {
-    //     return record.user?.username;
-    //   },
-    // },
+    {
+      title: "User Name",
+      key: "userName",
+      render: (_, record: CarDto) => {
+        return record.user?.username;
+      },
+    },
     {
       title: "Actions",
       key: "actions",
@@ -110,41 +107,32 @@ const CarTable: React.FC = () => {
     setPageSize(pageSize);
   };
 
-  const handleLog = async (status: "login" | "logout", carPlate: string) => {
+  const handleLog = async (carPlate: string) => {
     const storedUser = localStorage.getItem("user");
+
     if (!storedUser) {
       message.error("please login first");
       return;
     }
     const use = JSON.parse(storedUser);
+    console.log("handleLoginCar==>", status, carPlate, use);
 
-    console.log("handleLoginCar==>", status, carPlate);
-    if (status === "login") {
-      await addCar({
-        carPlate: carPlate!,
-        url: "https://cdn.pixabay.com/photo/2023/02/07/17/49/supercar-7774683_640.jpg",
-        userId: use.id,
-      });
-    }
+    await loginOrder({
+      carPlate: carPlate!,
+      url: "https://cdn.pixabay.com/photo/2023/02/07/17/49/supercar-7774683_640.jpg",
+      userId: use.id,
+    });
 
-    if (status === "logout") {
-      await addCar({
-        carPlate: carPlate!,
-        url: "https://cdn.pixabay.com/photo/2023/02/07/17/49/supercar-7774683_640.jpg",
-        userId: use.id,
-      });
-    }
+    fetchCars(page, pageSize);
   };
 
   return (
     <div>
       <Flex justify="start-end">
-        <UploadCarPlate
-          callback={(carPlate: string) => handleLog("login", carPlate)}
-        />
-        <UploadCarPlate
+        <UploadCarPlate callback={(carPlate: string) => handleLog(carPlate)} />
+        {/* <UploadCarPlate
           callback={(carPlate: string) => handleLog("logout", carPlate)}
-        />
+        /> */}
       </Flex>
 
       <Table

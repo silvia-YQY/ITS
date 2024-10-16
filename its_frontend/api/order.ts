@@ -1,5 +1,6 @@
 import axiosInstance from "@/lib/axiosInstance";
 import { Order, OrderDto, OrderDtoPagedResultDto } from "./types";
+import { CarDto } from "@/interface/car";
 
 export const fetchOrders = (): Promise<Order[]> =>
   axiosInstance.get("/api/Order");
@@ -24,4 +25,8 @@ export const updateOrder = async (id: number, order: Partial<OrderDto>) => {
 
 export const deleteOrder = async (id: number) => {
   return axiosInstance.delete(`/api/Order/${id}`);
+};
+
+export const loginOrder = async (car: Partial<CarDto>) => {
+  return axiosInstance.post("/api/Car/loginOrder", car);
 };

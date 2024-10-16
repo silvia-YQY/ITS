@@ -10,8 +10,10 @@ namespace ITS_APIs.Services
     Task<PagedResultDto<Car>> GetPagedCarAsync(int pageNumber, int pageSize);
     Task<Car> GetCarByIdAsync(int id);
     Task<Car> CreateCarAsync(Car car);
-    Task UpdateCarAsync(Car car);
+    Task<Car> UpdateCarAsync(Car car);
     Task DeleteCarAsync(int id);
+
+    Task<Car> loginOrderAsync(Car car);
 
     Task<bool> CheckCarPlate(Car car);
     Task<Car?> CarExists(int id);

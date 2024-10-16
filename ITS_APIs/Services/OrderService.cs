@@ -8,14 +8,14 @@ namespace ITS_APIs.Services
   public class OrderService : IOrderService
   {
     private readonly ITSDbContext _context;
-    private readonly ICarService _carService;
+    // private readonly ICarService _carService;
     private readonly IUserService _userService;
 
-    public OrderService(ITSDbContext context, ICarService carService,
+    public OrderService(ITSDbContext context,
     IUserService userService)
     {
       _context = context;
-      _carService = carService;
+      // _carService = carService;
       _userService = userService;
     }
 
@@ -65,13 +65,13 @@ namespace ITS_APIs.Services
     public async Task<Order> CreateOrderAsync(Order order)
     {
       var User = await _userService.UserExists(order.UserId);
-      var Car = await _carService.CarExists(order.CarId);
+      // var Car = await _carService.CarExists(order.CarId);
 
       if (User == null)
         throw new KeyNotFoundException($"User with ID {order.UserId} not found.");
 
-      if (Car == null)
-        throw new KeyNotFoundException($"Car with ID {order.CarId} not found.");
+      // if (Car == null)
+      //   throw new KeyNotFoundException($"Car with ID {order.CarId} not found.");
 
       _context.Orders.Add(order);
       await _context.SaveChangesAsync();
@@ -88,13 +88,13 @@ namespace ITS_APIs.Services
         throw new KeyNotFoundException($"Order with Id {order.Id} does not exist");
       }
 
-      var existingCar = await _carService.CarExists(order.CarId);
+      // var existingCar = await _carService.CarExists(order.CarId);
       var existingUser = await _userService.UserExists(order.UserId);
 
-      if (existingCar == null)
-      {
-        throw new KeyNotFoundException($"Car with Id {order.CarId} does not exist");
-      }
+      // if (existingCar == null)
+      // {
+      //   throw new KeyNotFoundException($"Car with Id {order.CarId} does not exist");
+      // }
 
       if (existingUser == null)
       {
@@ -150,7 +150,7 @@ namespace ITS_APIs.Services
     }
 
 
-    private decimal CalculateRentalFee(Order order)
+    public decimal CalculateRentalFee(Order order)
     {
       // Calculate the total number of hours between the end time and start time
       var totalHours = (order.EndTime - order.StartTime).TotalHours;

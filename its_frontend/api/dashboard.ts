@@ -5,36 +5,41 @@ import {
   TotalPendingOrdersResponse,
   RevenueByDateResponse,
   OrderStatisticsResponse,
-  TopUsersResponse,
 } from "@/interface/dashboard";
+import { Order } from "@/interface/order";
 
 // Fetch total cars parked
-export const fetchTotalCarsParked = (): Promise<TotalCarsParkedResponse> => {
-  return axiosInstance.get("/api/Dashboard/totalCarsParked");
+export const fetchTotalCarsParked = async (): Promise<number> => {
+  const res = await axiosInstance.get("/api/Dashboard/totalCarsParked");
+  return res.data;
 };
 
 // Fetch total revenue
-export const fetchTotalRevenue = (): Promise<TotalRevenueResponse> => {
-  return axiosInstance.get("/api/Dashboard/totalRevenue");
+export const fetchTotalRevenue = async (): Promise<number> => {
+  const res = await axiosInstance.get("/api/Dashboard/totalRevenue");
+  return res.data;
 };
 
 // Fetch total pending orders
-export const fetchTotalPendingOrders =
-  (): Promise<TotalPendingOrdersResponse> => {
-    return axiosInstance.get("/api/Dashboard/totalPendingOrder");
-  };
+export const fetchTotalPendingOrders = async (): Promise<Order[]> => {
+  const res = await axiosInstance.get("/api/Dashboard/totalPendingOrder");
+  return res.data;
+};
 
 // Fetch revenue by date range
-export const fetchRevenueByDate = (
+export const fetchRevenueByDate = async (
   startDate: string,
   endDate: string
 ): Promise<RevenueByDateResponse[]> => {
-  return axiosInstance.get(`/api/Dashboard/revenueByDate`, {
+  const res = await axiosInstance.get(`/api/Dashboard/revenueByDate`, {
     params: { startDate, endDate },
   });
+  return res.data;
 };
 
 // Fetch order statistics (completed, pending, canceled)
-export const fetchOrderStatistics = (): Promise<OrderStatisticsResponse> => {
-  return axiosInstance.get("/api/Dashboard/GetOrderStatistics");
-};
+export const fetchOrderStatistics =
+  async (): Promise<OrderStatisticsResponse> => {
+    const res = await axiosInstance.get("/api/Dashboard/GetOrderStatistics");
+    return res.data;
+  };

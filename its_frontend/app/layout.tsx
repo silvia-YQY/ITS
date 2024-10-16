@@ -1,6 +1,6 @@
 "use client";
 import "../app/globals.css";
-import { Avatar, Badge, Flex, Layout, Popconfirm, theme } from "antd";
+import { Avatar, Badge, Flex, Layout, Popconfirm } from "antd";
 import MenuComponent from "@/app/components/Menu";
 import React, { useEffect, useState } from "react";
 import LoginModel from "./components/LoginModel";
@@ -15,7 +15,6 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   const [user, setUser] = useState<User>(); // User state to track if user is logged in
-
   const [collapsed, setCollapsed] = useState(false);
   const router = useRouter();
 
@@ -61,21 +60,23 @@ export default function RootLayout({
               </Header>
               <Layout>
                 <Sider
-                  collapsible
+                  collapsible={false} // 禁用折叠
                   collapsed={collapsed}
                   onCollapse={(value) => setCollapsed(value)}
                 >
                   <div className="demo-logo-vertical" />
-                  {/* Menu and Main content displayed when the user is logged in */}
                   <MenuComponent user={user} />
                 </Sider>
-                <Content style={{ margin: "0 20px" }}>
-                  <div>{children}</div>
-                </Content>
+                <Layout style={{ display: "flex", flexDirection: "column" }}>
+                  {/* 使用 flex 来确保内容和 footer 正确布局 */}
+                  <Content style={{ flex: 1, margin: "0 20px" }}>
+                    <div>{children}</div>
+                  </Content>
+                  <Footer style={{ textAlign: "center" }}>
+                    Car Parking System ©2024
+                  </Footer>
+                </Layout>
               </Layout>
-              <Footer style={{ textAlign: "center" }}>
-                Car Parking System ©2024
-              </Footer>
             </Layout>
           )}
         </Layout>

@@ -15,5 +15,7 @@ namespace ITS_APIs.Services
     Task<Order?> OrderExists(int id);
 
     Task<Order?> UpdateOrderStatusAsync(Order order);
+
+    decimal CalculateRentalFee(Order order);
   }
 }

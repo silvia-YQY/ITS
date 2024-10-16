@@ -1,4 +1,5 @@
 using ITS_APIs.DTOs;
+using ITS_APIs.Enums;
 using ITS_APIs.Models;
 using ITS_APIs.Services;
 using Microsoft.EntityFrameworkCore;
@@ -9,13 +10,15 @@ namespace ITS_APIs.Services
   {
     private readonly ITSDbContext _context;
     private readonly IUserService _userService;
+    private readonly IOrderService _orderService;
     private readonly ILogger<CarService> _logger;
 
-    public CarService(ITSDbContext context, ILogger<CarService> logger, IUserService userService)
+    public CarService(ITSDbContext context, ILogger<CarService> logger, IUserService userService, IOrderService orderService)
     {
       _context = context;
       _logger = logger;
       _userService = userService;
+      _orderService = orderService;
     }
 
     public async Task<IEnumerable<Car>> GetAllCarsAsync()
@@ -78,7 +81,7 @@ namespace ITS_APIs.Services
 
     }
 
-    public async Task UpdateCarAsync(Car car)
+    public async Task<Car> UpdateCarAsync(Car car)
     {
       var existingCar = await GetCarByIdAsync(car.Id);
       var User = await _userService.UserExists(car.UserId);
@@ -91,6 +94,8 @@ namespace ITS_APIs.Services
       {
         _context.Entry(existingCar).CurrentValues.SetValues(car);
         await _context.SaveChangesAsync();
+        return car;
+
       }
       else
       {
@@ -109,6 +114,74 @@ namespace ITS_APIs.Services
         await _context.SaveChangesAsync();
       }
     }
+
+    public async Task<Car> loginOrderAsync(Car car)
+    {
+      // Check if the car already exists in the database
+      var existingCar = await _context.Cars
+          .Include(c => c.Orders)
+          .FirstOrDefaultAsync(c => c.CarPlate == car.CarPlate && c.UserId == car.UserId);
+
+      if (existingCar == null)
+      {
+        // Car does not exist, create it
+        _context.Cars.Add(car);
+        await _context.SaveChangesAsync();
+
+        // Create a new order for the car
+        var newOrder = new Order
+        {
+          CarId = car.Id,   // newly created car ID
+          UserId = car.UserId,
+          StartTime = DateTime.Now,
+          EndTime = DateTime.MinValue, // Set as default until car leaves
+          Fee = 0, // Fee will be calculated on exit
+          OrderStatus = OrderStatus.Pending
+        };
+
+        await _orderService.CreateOrderAsync(newOrder); // Assuming CreateOrderAsync saves it
+
+        return car; // Return the newly created car
+      }
+      else
+      {
+        // Check if there's any ongoing order for the car
+        var existingOrder = existingCar.Orders
+            .FirstOrDefault(o => o.OrderStatus == OrderStatus.Confirm || o.OrderStatus == OrderStatus.Pending);
+
+        if (existingOrder != null)
+        {
+          // There is an ongoing order, close it
+          existingOrder.EndTime = DateTime.Now;
+
+          // Calculate the fee (assuming the rate is 5 per hour)
+          existingOrder.Fee = _orderService.CalculateRentalFee(existingOrder);
+
+          // Update the order status to Done
+          existingOrder.OrderStatus = OrderStatus.Done;
+
+          await _orderService.UpdateOrderAsync(existingOrder); // Save updated order
+        }
+        else
+        {
+          // No ongoing order, create a new one
+          var newOrder = new Order
+          {
+            CarId = existingCar.Id,   // Use existing car ID
+            UserId = existingCar.UserId,
+            StartTime = DateTime.Now,
+            EndTime = DateTime.MinValue, // Set as default until car leaves
+            Fee = 0, // Fee will be calculated on exit
+            OrderStatus = OrderStatus.Pending
+          };
+
+          await _orderService.CreateOrderAsync(newOrder); // Create new order
+        }
+
+        return existingCar; // Return the existing car
+      }
+    }
+
 
     public async Task<Car?> CarExists(int id)
     {

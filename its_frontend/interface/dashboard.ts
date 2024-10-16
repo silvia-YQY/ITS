@@ -1,3 +1,5 @@
+import { Order } from "./order";
+
 export interface TotalCarsParkedResponse {
   totalCarsParked: number;
 }
@@ -7,7 +9,7 @@ export interface TotalRevenueResponse {
 }
 
 export interface TotalPendingOrdersResponse {
-  totalPendingOrders: number;
+  totalPendingOrders: Order[];
 }
 
 export interface RevenueByDateResponse {
@@ -19,6 +21,7 @@ export interface OrderStatisticsResponse {
   completedOrders: number;
   pendingOrders: number;
   canceledOrders: number;
+  totalOrders: number;
 }
 
 export interface TopUsersResponse {

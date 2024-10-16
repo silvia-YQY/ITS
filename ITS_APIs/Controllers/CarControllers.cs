@@ -146,5 +146,24 @@ namespace ITS_APIs.Controllers
         return StatusCode(StatusCodes.Status500InternalServerError, new { message = ex.Message });
       }
     }
+
+    [HttpPost("loginOrder")]
+    public async Task<ActionResult<CarDto>> LoginOrder(Car carDto)
+    {
+      try
+      {
+        var car = _mapper.Map<Car>(carDto); // Map the DTO to the Car model
+        var updatedCar = await _carService.loginOrderAsync(car); // Call the service method
+
+        var carDtoResult = _mapper.Map<CarDto>(updatedCar); // Map the result back to DTO
+        return Ok(carDtoResult);
+      }
+      catch (Exception ex)
+      {
+        _logger.LogError(ex, "An unexpected error occurred during car login.");
+        return StatusCode(StatusCodes.Status500InternalServerError, new { message = ex.Message });
+      }
+    }
+
   }
 }

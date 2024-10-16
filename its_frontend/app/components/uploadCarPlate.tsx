@@ -10,12 +10,13 @@ const UploadCarPlate: React.FC = ({ callback }) => {
   // Function to simulate a random car plate generation
   const generateRandomCarPlate = () => {
     const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-    const randomLetters = Array(3)
-      .fill("")
-      .map(() => letters[Math.floor(Math.random() * letters.length)])
-      .join("");
-    const randomNumbers = Math.floor(1000 + Math.random() * 9000);
-    return `${randomLetters}${randomNumbers}`;
+    // const randomLetters = Array(3)
+    //   .fill("")
+    //   .map(() => letters[Math.floor(Math.random() * letters.length)])
+    //   .join("");
+    // const randomNumbers = Math.floor(1000 + Math.random() * 9000);
+    // return `${randomLetters}${randomNumbers}`;
+    return "POI56";
   };
 
   // Simulated upload handler
