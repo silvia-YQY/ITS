@@ -4,7 +4,11 @@ import { UploadOutlined } from "@ant-design/icons";
 import React, { useEffect, useState } from "react";
 import recognisePlate from "@/api/upload";
 
-const UploadCarPlate: React.FC = ({ callback }) => {
+interface UploadCarPlateProps {
+  callback: (str: string) => void;
+}
+
+const UploadCarPlate: React.FC<UploadCarPlateProps> = ({ callback }) => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [carPlate, setCarPlate] = useState<string | null>(null);
 
@@ -43,6 +47,7 @@ const UploadCarPlate: React.FC = ({ callback }) => {
     recognisePlate(file)
       .then((result) => {
         if (result) {
+          setCarPlate(result.obj.plate);
           message.success(
             `Recognition successful! CarPlate: ${result.obj.plate}`
           );
