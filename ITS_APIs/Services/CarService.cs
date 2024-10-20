@@ -1,4 +1,6 @@
+using System.Security.Claims;
 using ITS_APIs.DTOs;
+using ITS_APIs.Enums;
 using ITS_APIs.Models;
 using ITS_APIs.Services;
 using Microsoft.EntityFrameworkCore;
@@ -8,10 +10,16 @@ namespace ITS_APIs.Services
   public class CarService : ICarService
   {
     private readonly ITSDbContext _context;
+    private readonly IUserService _userService;
+    private readonly IOrderService _orderService;
+    private readonly ILogger<CarService> _logger;
 
-    public CarService(ITSDbContext context)
+    public CarService(ITSDbContext context, ILogger<CarService> logger, IUserService userService, IOrderService orderService)
     {
       _context = context;
+      _logger = logger;
+      _userService = userService;
+      _orderService = orderService;
     }
 
     public async Task<IEnumerable<Car>> GetAllCarsAsync()
@@ -33,6 +41,7 @@ namespace ITS_APIs.Services
       var items = await query.Skip((pageNumber - 1) * pageSize)
                               .Take(pageSize)
                               .ToListAsync();
+      _logger.LogInformation($"Total cars found: {totalCount}, Items: {items.Count}");
 
       return new PagedResultDto<Car>
       {
@@ -56,17 +65,44 @@ namespace ITS_APIs.Services
 
     }
 
-    public async Task<Car> CreateCarAsync(Car Car)
+    public async Task<Car> CreateCarAsync(Car car)
     {
-      _context.Cars.Add(Car);
-      await _context.SaveChangesAsync();
-      return Car;
+      var User = await _userService.UserExists(car.UserId);
+      if (User != null)
+      {
+
+        _context.Cars.Add(car);
+        await _context.SaveChangesAsync();
+      }
+      else
+      {
+        throw new KeyNotFoundException($"User Id {car.UserId} not found.");
+      }
+      return car;
+
     }
 
-    public async Task UpdateCarAsync(Car updatedCar, Car existingCar)
+    public async Task<Car> UpdateCarAsync(Car car)
     {
-      _context.Entry(existingCar).CurrentValues.SetValues(updatedCar);
-      await _context.SaveChangesAsync();
+      var existingCar = await GetCarByIdAsync(car.Id);
+      var User = await _userService.UserExists(car.UserId);
+      if (existingCar == null)
+      {
+        throw new KeyNotFoundException($"Car with Id {car.Id} does not exist");
+      }
+
+      if (User != null)
+      {
+        _context.Entry(existingCar).CurrentValues.SetValues(car);
+        await _context.SaveChangesAsync();
+        return car;
+
+      }
+      else
+      {
+        throw new KeyNotFoundException($"User Id {car.UserId} not found.");
+      }
+
 
     }
 
@@ -79,6 +115,118 @@ namespace ITS_APIs.Services
         await _context.SaveChangesAsync();
       }
     }
+
+    public async Task<Car> loginOrderAsync(Car car)
+    {
+      // Check if the car already exists in the database
+      var existingCar = await _context.Cars
+          .Include(c => c.Orders)
+          .FirstOrDefaultAsync(c => c.CarPlate == car.CarPlate && c.UserId == car.UserId);
+
+      if (existingCar == null)
+      {
+        // Car does not exist, create it
+        _context.Cars.Add(car);
+        await _context.SaveChangesAsync();
+
+        // Create a new order for the car
+        var newOrder = new Order
+        {
+          CarId = car.Id,   // newly created car ID
+          UserId = car.UserId,
+          StartTime = DateTime.Now,
+          EndTime = DateTime.MinValue, // Set as default until car leaves
+          Fee = 0, // Fee will be calculated on exit
+          OrderStatus = OrderStatus.Pending
+        };
+
+        await _orderService.CreateOrderAsync(newOrder); // Assuming CreateOrderAsync saves it
+
+        return car; // Return the newly created car
+      }
+      else
+      {
+        // Check if there's any ongoing order for the car
+        var existingOrder = existingCar.Orders
+            .FirstOrDefault(o => o.OrderStatus == OrderStatus.Confirm || o.OrderStatus == OrderStatus.Pending);
+
+        if (existingOrder != null)
+        {
+          // There is an ongoing order, close it
+          existingOrder.EndTime = DateTime.Now;
+
+          // Calculate the fee (assuming the rate is 5 per hour)
+          existingOrder.Fee = _orderService.CalculateRentalFee(existingOrder);
+
+          // Update the order status to Done
+          existingOrder.OrderStatus = OrderStatus.Done;
+
+          await _orderService.UpdateOrderAsync(existingOrder); // Save updated order
+        }
+        else
+        {
+          // No ongoing order, create a new one
+          var newOrder = new Order
+          {
+            CarId = existingCar.Id,   // Use existing car ID
+            UserId = existingCar.UserId,
+            StartTime = DateTime.Now,
+            EndTime = DateTime.MinValue, // Set as default until car leaves
+            Fee = 0, // Fee will be calculated on exit
+            OrderStatus = OrderStatus.Pending
+          };
+
+          await _orderService.CreateOrderAsync(newOrder); // Create new order
+        }
+
+        return existingCar; // Return the existing car
+      }
+    }
+
+    public async Task<PagedResultDto<Car>> GetPagedCarsByUserAsync(string userId, ClaimsPrincipal user, int pageNumber, int pageSize)
+    {
+      // get user role from  Claims 
+      var userRole = user.FindFirst(ClaimTypes.Role)?.Value;
+
+      // create base sql
+      var query = _context.Cars
+                          .Include(c => c.User)
+                          .AsQueryable();
+
+      _logger.LogInformation("User role is: {userId1}:{}", userId, userId);
+
+
+      // not admin, filter current user data 
+      if (userRole != "Admin")
+      {
+        int parsedUserId;
+        if (int.TryParse(userId, out parsedUserId))
+        {
+          query = query.Where(c => c.UserId == parsedUserId);
+        }
+        else
+        {
+          // 处理无法转换为 int 的情况，比如记录日志或抛出异常
+          _logger.LogError("Invalid UserId format");
+        }
+      }
+
+
+      var totalCount = await query.CountAsync();
+      var items = await query.Skip((pageNumber - 1) * pageSize)
+                            .Take(pageSize)
+                            .ToListAsync();
+
+      return new PagedResultDto<Car>
+      {
+        Items = items,
+        TotalCount = totalCount,
+        PageNumber = pageNumber,
+        PageSize = pageSize
+      };
+    }
+
+
 
     public async Task<Car?> CarExists(int id)
     {

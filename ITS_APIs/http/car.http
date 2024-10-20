@@ -1,5 +1,6 @@
 @ITS_URL = http://localhost:5288
 
+@Authorization = Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1lIjoiMSIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL25hbWVpZGVudGlmaWVyIjoiMjYiLCJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9lbWFpbGFkZHJlc3MiOiIxQDEuY29tIiwiaHR0cDovL3NjaGVtYXMubWljcm9zb2Z0LmNvbS93cy8yMDA4LzA2L2lkZW50aXR5L2NsYWltcy9yb2xlIjoiVXNlciIsImV4cCI6MTcyOTE0MTg0NCwiaXNzIjoieW91cl9pc3N1ZXJfaGVyZSIsImF1ZCI6InlvdXJfYXVkaWVuY2VfaGVyZSJ9.Ja0R_0dJDqQqVWOm9dQ8HDDjch83dTAtriZ6U4auTGo
 
 ### Get all cars
 GET  {{ITS_URL}}/api/Car
@@ -8,35 +9,39 @@ Accept: application/json
 ###
 
 ### Get a car by ID (Replace {id} with actual car ID)
-GET  {{ITS_URL}}/api/Car/1
+GET  {{ITS_URL}}/api/Car/15
 Accept: application/json
 
 ### Get a car list by page
 GET {{ITS_URL}}/api/Car/allByPage?pageNumber=1&pageSize=3
 Accept: application/json
 
+### 获取当前用户相关的车辆列表 - 测试第一页
+GET {{ITS_URL}}/api/Car/userCars?pageNumber=1&pageSize=5
+Authorization: {{Authorization}}
+
 ###
 
 ### Create a new car
 POST  {{ITS_URL}}/api/Car
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1lIjoiYWRtaW4iLCJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9lbWFpbGFkZHJlc3MiOiIxMjM0QGV4YW1wbGUxLmNvbSIsImh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vd3MvMjAwOC8wNi9pZGVudGl0eS9jbGFpbXMvcm9sZSI6IkFkbWluIiwiZXhwIjoxNzI4ODUzMzkzLCJpc3MiOiJ5b3VyX2lzc3Vlcl9oZXJlIiwiYXVkIjoieW91cl9hdWRpZW5jZV9oZXJlIn0.lagH9IMFo9tNQEimJ_-o1GE6MTIw4Ey0Amt1i-le6tc
+Authorization: {{Authorization}}
 
 {
-  "carPlate": "ABC123456",
+  "carPlate": "ABC123",
   "url": "https://example.com/carimage.png",
-  "userId": 13
+  "userId": 22
 }
 
 ###
 
 ### Update an existing car (Replace {id} with actual car ID)
-PUT  {{ITS_URL}}/api/Car/1
+PUT  {{ITS_URL}}/api/Car/27
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1lIjoiYWRtaW4iLCJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9lbWFpbGFkZHJlc3MiOiIxMjM0QGV4YW1wbGUxLmNvbSIsImh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vd3MvMjAwOC8wNi9pZGVudGl0eS9jbGFpbXMvcm9sZSI6IkFkbWluIiwiZXhwIjoxNzI4ODUzMzkzLCJpc3MiOiJ5b3VyX2lzc3Vlcl9oZXJlIiwiYXVkIjoieW91cl9hdWRpZW5jZV9oZXJlIn0.lagH9IMFo9tNQEimJ_-o1GE6MTIw4Ey0Amt1i-le6tc
+Authorization: {{Authorization}}
 
 {
-  "id": 1,
+  "id": 27,
   "carPlate": "XYZ789",
   "url": "https://example.com/newcarimage.png",
   "userId": 13
@@ -47,5 +52,17 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hc
 ### Delete a car (Replace {id} with actual car ID)
 DELETE  {{ITS_URL}}/api/Car/3
 Accept: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1lIjoiYWRtaW4xMjMiLCJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9lbWFpbGFkZHJlc3MiOiJ1aW8iLCJodHRwOi8vc2NoZW1hcy5taWNyb3NvZnQuY29tL3dzLzIwMDgvMDYvaWRlbnRpdHkvY2xhaW1zL3JvbGUiOiJBZG1pbiIsImV4cCI6MTcyODY5OTE0NSwiaXNzIjoieW91cl9pc3N1ZXJfaGVyZSIsImF1ZCI6InlvdXJfYXVkaWVuY2VfaGVyZSJ9.ZF3ijFDcQMr8DvsjtIQdIW2cMWgrLYr2l1VeFUPNG2o
+Authorization: {{Authorization}}
 
+
+
+### Create a new car
+POST  {{ITS_URL}}/api/Car/loginOrder
+Content-Type: application/json
+Authorization: {{Authorization}}
+
+{
+  "carPlate": "ABC56",
+  "url": "https://example.com/carimage.png",
+  "userId": 25
+}

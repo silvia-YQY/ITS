@@ -1,4 +1,5 @@
 @ITS_URL = http://localhost:5288
+@Authorization = Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1lIjoiMiIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL2VtYWlsYWRkcmVzcyI6IjJAMi5jb20iLCJodHRwOi8vc2NoZW1hcy5taWNyb3NvZnQuY29tL3dzLzIwMDgvMDYvaWRlbnRpdHkvY2xhaW1zL3JvbGUiOiJBZG1pbiIsImV4cCI6MTcyOTE0MDAwMSwiaXNzIjoieW91cl9pc3N1ZXJfaGVyZSIsImF1ZCI6InlvdXJfYXVkaWVuY2VfaGVyZSJ9.DyBrEISpUicoW51lncVsMjgD3Ssz27ItYjYXTC3Rx38
 
 ### Get all orders
 GET {{ITS_URL}}/api/Order
@@ -7,6 +8,10 @@ Accept: application/json
 ### Get a car list by page
 GET {{ITS_URL}}/api/Order/allByPage?pageNumber=1&pageSize=3
 Accept: application/json
+
+### 获取当前用户相关的订单列表 - 测试第一页
+GET {{ITS_URL}}/api/Order/userOrders?pageNumber=1&pageSize=5
+Authorization: {{Authorization}}
 
 ###
 
@@ -19,11 +24,11 @@ Accept: application/json
 ### Create a new order
 POST {{ITS_URL}}/api/Order
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1lIjoiYWRtaW4xMjMiLCJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9lbWFpbGFkZHJlc3MiOiJ1aW8iLCJodHRwOi8vc2NoZW1hcy5taWNyb3NvZnQuY29tL3dzLzIwMDgvMDYvaWRlbnRpdHkvY2xhaW1zL3JvbGUiOiJBZG1pbiIsImV4cCI6MTcyODY5OTE0NSwiaXNzIjoieW91cl9pc3N1ZXJfaGVyZSIsImF1ZCI6InlvdXJfYXVkaWVuY2VfaGVyZSJ9.ZF3ijFDcQMr8DvsjtIQdIW2cMWgrLYr2l1VeFUPNG2o
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1lIjoiYWRtaW4iLCJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9lbWFpbGFkZHJlc3MiOiIxMjM0QGV4YW1wbGUxLmNvbSIsImh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vd3MvMjAwOC8wNi9pZGVudGl0eS9jbGFpbXMvcm9sZSI6IkFkbWluIiwiZXhwIjoxNzI5MTIzNjUwLCJpc3MiOiJ5b3VyX2lzc3Vlcl9oZXJlIiwiYXVkIjoieW91cl9hdWRpZW5jZV9oZXJlIn0.AiVHrS8Vx2zZGL_kjMl32qS0lRwEno5PiZ6tfHKNRmA
 
 {
-  "carId": 2,
-  "userId": 9,
+  "carId": 27,
+  "userId": 22,
   "startTime": "2024-10-11T10:00:00",
   "endTime": "2024-10-11T10:00:00",
   "orderStatus": 0
@@ -33,33 +38,33 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hc
 ###
 
 ### Update an existing order (Replace {id} with actual order ID)
-PUT {{ITS_URL}}/api/Order/2
+PUT {{ITS_URL}}/api/Order/23
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1lIjoiYWRtaW4xMjMiLCJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9lbWFpbGFkZHJlc3MiOiJ1aW8iLCJodHRwOi8vc2NoZW1hcy5taWNyb3NvZnQuY29tL3dzLzIwMDgvMDYvaWRlbnRpdHkvY2xhaW1zL3JvbGUiOiJBZG1pbiIsImV4cCI6MTcyODY5OTE0NSwiaXNzIjoieW91cl9pc3N1ZXJfaGVyZSIsImF1ZCI6InlvdXJfYXVkaWVuY2VfaGVyZSJ9.ZF3ijFDcQMr8DvsjtIQdIW2cMWgrLYr2l1VeFUPNG2o
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1lIjoiYWRtaW4iLCJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9lbWFpbGFkZHJlc3MiOiIxMjM0QGV4YW1wbGUxLmNvbSIsImh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vd3MvMjAwOC8wNi9pZGVudGl0eS9jbGFpbXMvcm9sZSI6IkFkbWluIiwiZXhwIjoxNzI5MTIzNjUwLCJpc3MiOiJ5b3VyX2lzc3Vlcl9oZXJlIiwiYXVkIjoieW91cl9hdWRpZW5jZV9oZXJlIn0.AiVHrS8Vx2zZGL_kjMl32qS0lRwEno5PiZ6tfHKNRmA
 
 {
-  "id": 2,
-  "carId": 2,   
-  "userId": 9, 
+  "id": 23,
+  "carId": 27,
+  "userId": 22,
   "startTime": "2024-10-07T10:00:00",
   "endTime": "2024-10-07T20:00:00", 
-  "orderStatus": 0  
+  "orderStatus": 4
 }
 
 ###
 
 ### Delete an order (Replace {id} with actual order ID)
-DELETE {{ITS_URL}}/api/Order/7
+DELETE {{ITS_URL}}/api/Order/
 Accept: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1lIjoiYWRtaW4xMjMiLCJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9lbWFpbGFkZHJlc3MiOiJ1aW8iLCJodHRwOi8vc2NoZW1hcy5taWNyb3NvZnQuY29tL3dzLzIwMDgvMDYvaWRlbnRpdHkvY2xhaW1zL3JvbGUiOiJBZG1pbiIsImV4cCI6MTcyODY5OTE0NSwiaXNzIjoieW91cl9pc3N1ZXJfaGVyZSIsImF1ZCI6InlvdXJfYXVkaWVuY2VfaGVyZSJ9.ZF3ijFDcQMr8DvsjtIQdIW2cMWgrLYr2l1VeFUPNG2o
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1lIjoiYWRtaW4iLCJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9lbWFpbGFkZHJlc3MiOiIxMjM0QGV4YW1wbGUxLmNvbSIsImh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vd3MvMjAwOC8wNi9pZGVudGl0eS9jbGFpbXMvcm9sZSI6IkFkbWluIiwiZXhwIjoxNzI5MTIzNjUwLCJpc3MiOiJ5b3VyX2lzc3Vlcl9oZXJlIiwiYXVkIjoieW91cl9hdWRpZW5jZV9oZXJlIn0.AiVHrS8Vx2zZGL_kjMl32qS0lRwEno5PiZ6tfHKNRmA
 
 
 ### update an order status
 
-PUT   {{ITS_URL}}/api/Order/status/2
+PUT   {{ITS_URL}}/api/Order/status/24
 Content-Type: application/json
 Accept-Language: en-US,en;q=0.5
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1lIjoiYWRtaW4xMjMiLCJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9lbWFpbGFkZHJlc3MiOiJ1aW8iLCJodHRwOi8vc2NoZW1hcy5taWNyb3NvZnQuY29tL3dzLzIwMDgvMDYvaWRlbnRpdHkvY2xhaW1zL3JvbGUiOiJBZG1pbiIsImV4cCI6MTcyODY5OTE0NSwiaXNzIjoieW91cl9pc3N1ZXJfaGVyZSIsImF1ZCI6InlvdXJfYXVkaWVuY2VfaGVyZSJ9.ZF3ijFDcQMr8DvsjtIQdIW2cMWgrLYr2l1VeFUPNG2o
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1lIjoiYWRtaW4iLCJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9lbWFpbGFkZHJlc3MiOiIxMjM0QGV4YW1wbGUxLmNvbSIsImh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vd3MvMjAwOC8wNi9pZGVudGl0eS9jbGFpbXMvcm9sZSI6IkFkbWluIiwiZXhwIjoxNzI5MTIzNjUwLCJpc3MiOiJ5b3VyX2lzc3Vlcl9oZXJlIiwiYXVkIjoieW91cl9hdWRpZW5jZV9oZXJlIn0.AiVHrS8Vx2zZGL_kjMl32qS0lRwEno5PiZ6tfHKNRmA
 
 
 {

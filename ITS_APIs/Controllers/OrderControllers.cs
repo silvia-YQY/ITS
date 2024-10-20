@@ -5,6 +5,7 @@ using AutoMapper;
 using ITS_APIs.DTOs;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
+using System.Security.Claims;
 
 namespace ITS_APIs.Controllers
 {
@@ -87,7 +88,6 @@ namespace ITS_APIs.Controllers
     {
       try
       {
-
         var createdOrder = await _orderService.CreateOrderAsync(order);
 
         var createOrderDtos = _mapper.Map<OrderDto>(createdOrder);
@@ -96,8 +96,7 @@ namespace ITS_APIs.Controllers
       }
       catch (Exception ex)
       {
-        _logger.LogError(ex, "An error occurred while processing create order.");
-        return StatusCode(StatusCodes.Status500InternalServerError, "An internal server error occurred.");
+        return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
       }
 
     }
@@ -155,7 +154,7 @@ namespace ITS_APIs.Controllers
       catch (Exception ex)
       {
         _logger.LogError(ex, "An unexpected error occurred while getting Order.");
-        return StatusCode(StatusCodes.Status500InternalServerError, "An unexpected error occurred.");
+        return StatusCode(StatusCodes.Status500InternalServerError, new { message = ex.Message });
       }
 
     }
@@ -166,11 +165,9 @@ namespace ITS_APIs.Controllers
     {
       try
       {
-        // searching for existing order
         var order = await _orderService.GetOrderByIdAsync(id);
         if (order == null)
         {
-          _logger.LogError($"Order with id {id} not found");
           return NotFound($"Order with id {id} not found");
         }
 
@@ -184,13 +181,41 @@ namespace ITS_APIs.Controllers
       }
       catch (DbUpdateException ex)
       {
-        _logger.LogError(ex, "Failed to update order status");
-        return StatusCode(StatusCodes.Status500InternalServerError, "Failed to update order status");
+
+        return StatusCode(StatusCodes.Status500InternalServerError, new { message = ex.Message });
       }
       catch (Exception ex)
       {
-        _logger.LogError(ex, "An unexpected error occurred");
-        return StatusCode(StatusCodes.Status500InternalServerError, "An unexpected error occurred");
+
+        return StatusCode(StatusCodes.Status500InternalServerError, new { message = ex.Message });
+      }
+    }
+
+    [HttpGet("userOrders")]
+    public async Task<ActionResult<PagedResultDto<OrderDto>>> GetOrdersByUser([FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 10)
+    {
+      try
+      {
+        // var userId = int.Parse(User.Identity.Name); // 获取当前用户的 ID
+        var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+        var orders = await _orderService.GetPagedOrdersByUserAsync(userId, User, pageNumber, pageSize);
+        var orderDtos = _mapper.Map<List<OrderDto>>(orders.Items);
+
+        var pagedResult = new PagedResultDto<OrderDto>
+        {
+          Items = orderDtos,
+          TotalCount = orders.TotalCount,
+          PageNumber = pageNumber,
+          PageSize = pageSize
+        };
+
+        return Ok(pagedResult);
+      }
+      catch (Exception ex)
+      {
+        _logger.LogError(ex, "An error occurred while fetching user orders.");
+        return StatusCode(500, "An error occurred while processing your request.");
       }
     }
 

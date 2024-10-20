@@ -66,7 +66,7 @@ namespace ITS_APIs.Controllers
       {
         // 处理异常并记录日志
         _logger.LogError(ex, "An unexpected error occurred while getting all cars.");
-        return StatusCode(StatusCodes.Status500InternalServerError, "An unexpected error occurred.");
+        return StatusCode(StatusCodes.Status500InternalServerError, new { message = ex.Message });
       }
     }
 
@@ -111,9 +111,9 @@ namespace ITS_APIs.Controllers
         await _context.UpdateUserAsync(user);
         return Ok("Update successful");
       }
-      catch (Exception error)
+      catch (Exception ex)
       {
-        return StatusCode(StatusCodes.Status500InternalServerError, error);
+        return StatusCode(StatusCodes.Status500InternalServerError, new { message = ex.Message });
       }
 
     }
@@ -136,9 +136,8 @@ namespace ITS_APIs.Controllers
       }
       catch (Exception ex)
       {
-        // 处理异常并记录日志
-        _logger.LogError(ex, "An unexpected error occurred while getting user.");
-        return StatusCode(StatusCodes.Status500InternalServerError, "An unexpected error occurred.");
+
+        return StatusCode(StatusCodes.Status500InternalServerError, new { message = ex.Message });
       }
 
     }

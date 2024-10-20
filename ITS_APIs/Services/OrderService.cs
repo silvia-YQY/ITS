@@ -1,3 +1,4 @@
+using System.Security.Claims;
 using ITS_APIs.DTOs;
 using ITS_APIs.Models;
 using ITS_APIs.Services;
@@ -8,15 +9,17 @@ namespace ITS_APIs.Services
   public class OrderService : IOrderService
   {
     private readonly ITSDbContext _context;
-    private readonly ICarService _carService;
+    // private readonly ICarService _carService;
     private readonly IUserService _userService;
-
-    public OrderService(ITSDbContext context, ICarService carService,
+    private readonly ILogger<OrderService> _logger;
+    public OrderService(ITSDbContext context, ILogger<OrderService> logger,
     IUserService userService)
     {
       _context = context;
-      _carService = carService;
+      // _carService = carService;
       _userService = userService;
+      _logger = logger;
+
     }
 
     public async Task<IEnumerable<Order>> GetAllOrdersAsync()
@@ -62,11 +65,20 @@ namespace ITS_APIs.Services
 
     }
 
-    public async Task<Order> CreateOrderAsync(Order Order)
+    public async Task<Order> CreateOrderAsync(Order order)
     {
-      _context.Orders.Add(Order);
+      var User = await _userService.UserExists(order.UserId);
+      // var Car = await _carService.CarExists(order.CarId);
+
+      if (User == null)
+        throw new KeyNotFoundException($"User with ID {order.UserId} not found.");
+
+      // if (Car == null)
+      //   throw new KeyNotFoundException($"Car with ID {order.CarId} not found.");
+
+      _context.Orders.Add(order);
       await _context.SaveChangesAsync();
-      return Order;
+      return order;
     }
 
     public async Task UpdateOrderAsync(Order order)
@@ -76,20 +88,20 @@ namespace ITS_APIs.Services
 
       if (existingOrder == null)
       {
-        throw new ArgumentException($"Order with Id {order.Id} does not exist");
+        throw new KeyNotFoundException($"Order with Id {order.Id} does not exist");
       }
 
-      var existingCar = await _carService.GetCarByIdAsync(order.CarId);
-      var existingUser = await _userService.GetUserByIdAsync(order.UserId);
+      // var existingCar = await _carService.CarExists(order.CarId);
+      var existingUser = await _userService.UserExists(order.UserId);
 
-      if (existingCar == null)
-      {
-        throw new ArgumentException($"Car with Id {order.CarId} does not exist");
-      }
+      // if (existingCar == null)
+      // {
+      //   throw new KeyNotFoundException($"Car with Id {order.CarId} does not exist");
+      // }
 
       if (existingUser == null)
       {
-        throw new ArgumentException($"User with Id {order.UserId} does not exist");
+        throw new KeyNotFoundException($"User with Id {order.UserId} does not exist");
       }
 
 
@@ -135,18 +147,64 @@ namespace ITS_APIs.Services
 
     public async Task<Order?> UpdateOrderStatusAsync(Order order)
     {
+
       await _context.SaveChangesAsync();
       return order;
     }
 
+    public async Task<PagedResultDto<Order>> GetPagedOrdersByUserAsync(string userId, ClaimsPrincipal user, int pageNumber, int pageSize)
+    {
 
-    private decimal CalculateRentalFee(Order order)
+      // get user role from  Claims 
+      var userRole = user.FindFirst(ClaimTypes.Role)?.Value;
+
+      // create base sql
+      var query = _context.Orders
+                          .Include(c => c.User)
+                          .Include(o => o.Car)
+                          .AsQueryable();
+
+
+
+
+      // not admin, filter current user data 
+      if (userRole != "Admin")
+      {
+        int parsedUserId;
+        if (int.TryParse(userId, out parsedUserId))
+        {
+          query = query.Where(c => c.UserId == parsedUserId);
+          {
+            // 处理无法转换为 int 的情况，比如记录日志或抛出异常
+            _logger.LogError("Invalid UserId format");
+          }
+        }
+      }
+
+
+      var totalCount = await query.CountAsync();
+      var items = await query.Skip((pageNumber - 1) * pageSize)
+                            .Take(pageSize)
+                            .ToListAsync();
+
+      return new PagedResultDto<Order>
+      {
+        Items = items,
+        TotalCount = totalCount,
+        PageNumber = pageNumber,
+        PageSize = pageSize
+      };
+    }
+
+
+
+    public decimal CalculateRentalFee(Order order)
     {
       // Calculate the total number of hours between the end time and start time
       var totalHours = (order.EndTime - order.StartTime).TotalHours;
 
       // Multiply the total hours by the rate (e.g., 5 per hour)
-      return 5 * (decimal)totalHours;
+      return 50 * (decimal)totalHours;
     }
   }
 }

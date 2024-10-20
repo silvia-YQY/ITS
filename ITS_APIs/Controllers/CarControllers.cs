@@ -7,6 +7,7 @@ using ITS_APIs.Services;
 using AutoMapper;
 using ITS_APIs.DTOs;
 using Microsoft.AspNetCore.Authorization;
+using System.Security.Claims;
 
 namespace ITS_APIs.Controllers
 {
@@ -41,6 +42,7 @@ namespace ITS_APIs.Controllers
       {
         var cars = await _carService.GetPagedCarAsync(pageNumber, pageSize);
         var CarDtos = _mapper.Map<List<CarDto>>(cars.Items);
+        _logger.LogInformation($"Fetching cars with PageNumber: {pageNumber}, PageSize: {pageSize}");
 
         var pagedResult = new PagedResultDto<CarDto>
         {
@@ -54,9 +56,10 @@ namespace ITS_APIs.Controllers
       }
       catch (Exception ex)
       {
-        // 处理异常并记录日志
+
         _logger.LogError(ex, "An unexpected error occurred while getting all cars.");
-        return StatusCode(StatusCodes.Status500InternalServerError, "An unexpected error occurred.");
+        return StatusCode(StatusCodes.Status500InternalServerError, new { message = ex.Message });
+
       }
     }
 
@@ -93,7 +96,7 @@ namespace ITS_APIs.Controllers
       catch (Exception error)
       {
 
-        return StatusCode(StatusCodes.Status500InternalServerError, error);
+        return StatusCode(StatusCodes.Status500InternalServerError, error.Message);
       }
     }
 
@@ -102,27 +105,21 @@ namespace ITS_APIs.Controllers
     [HttpPut("{id}")]
     public async Task<IActionResult> PutCar(int id, Car car)
     {
-      var existingCar = await _carService.GetCarByIdAsync(id);
       if (id != car.Id)
       {
         return BadRequest("Id mismatch");
       }
 
-      if (existingCar == null)
-      {
-        return StatusCode(StatusCodes.Status500InternalServerError, $"Car with Id {id} does not exist");
-      }
-
       try
       {
-        await _carService.UpdateCarAsync(car, existingCar);
+        await _carService.UpdateCarAsync(car);
 
         return Ok("Update successful");
       }
       catch (Exception ex)
       {
-        _logger.LogError(ex, "An error occurred while processing the request.");
-        return StatusCode(StatusCodes.Status500InternalServerError, "An error occurred while processing your request.");
+        _logger.LogInformation(ex, "An error occurred while processing the request.");
+        return StatusCode(StatusCodes.Status500InternalServerError, new { message = ex.Message });
       }
 
     }
@@ -147,8 +144,54 @@ namespace ITS_APIs.Controllers
       {
 
         _logger.LogError(ex, "An unexpected error occurred while getting Car.");
-        return StatusCode(StatusCodes.Status500InternalServerError, "An unexpected error occurred.");
+        return StatusCode(StatusCodes.Status500InternalServerError, new { message = ex.Message });
       }
     }
+
+    [HttpPost("loginOrder")]
+    public async Task<ActionResult<CarDto>> LoginOrder(Car carDto)
+    {
+      try
+      {
+        var car = _mapper.Map<Car>(carDto); // Map the DTO to the Car model
+        var updatedCar = await _carService.loginOrderAsync(car); // Call the service method
+
+        var carDtoResult = _mapper.Map<CarDto>(updatedCar); // Map the result back to DTO
+        return Ok(carDtoResult);
+      }
+      catch (Exception ex)
+      {
+        _logger.LogError(ex, "An unexpected error occurred during car login.");
+        return StatusCode(StatusCodes.Status500InternalServerError, new { message = ex.Message });
+      }
+    }
+    [HttpGet("userCars")]
+    public async Task<ActionResult<PagedResultDto<CarDto>>> GetCarsByUser([FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 10)
+    {
+      try
+      {
+        // var userId = int.Parse(User.Identity.Name); // 获取当前用户的 ID
+        var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+        var cars = await _carService.GetPagedCarsByUserAsync(userId, User, pageNumber, pageSize);
+        var carDtos = _mapper.Map<List<CarDto>>(cars.Items);
+
+        var pagedResult = new PagedResultDto<CarDto>
+        {
+          Items = carDtos,
+          TotalCount = cars.TotalCount,
+          PageNumber = pageNumber,
+          PageSize = pageSize
+        };
+
+        return Ok(pagedResult);
+      }
+      catch (Exception ex)
+      {
+        _logger.LogError(ex, "An error occurred while fetching user cars.");
+        return StatusCode(500, "An error occurred while processing your request.");
+      }
+    }
+
   }
 }

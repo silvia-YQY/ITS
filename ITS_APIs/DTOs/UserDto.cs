@@ -19,8 +19,8 @@ public class UserDto
   // [Required(ErrorMessage = "Password is required")]
   // public string Password { get; set; } = "";
 
-  // [JsonConverter(typeof(JsonStringEnumConverter))]
-  // public RoleType Role { get; set; }
+  [JsonConverter(typeof(JsonStringEnumConverter))]
+  public RoleType Role { get; set; }
 
   // Email is required and unique
   [EmailAddress(ErrorMessage = "Invalid Email Address")]

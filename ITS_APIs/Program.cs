@@ -14,6 +14,19 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+// register Cors services
+builder.Services.AddCors(options =>
+{
+  options.AddDefaultPolicy(
+      builder =>
+      {
+        builder.AllowAnyOrigin()
+                 .AllowAnyHeader()
+                 .AllowAnyMethod();
+      });
+});
+
+
 // Configure the DbContext to use MySQL
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 builder.Services.AddDbContext<ITSDbContext>(options =>
@@ -35,6 +48,7 @@ builder.Services.AddControllers()
       options.JsonSerializerOptions.DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.Never; // Ensure default values are included
       options.JsonSerializerOptions.PropertyNamingPolicy = null; // Optional: maintain original casing of property names
       options.JsonSerializerOptions.WriteIndented = true; // Optional: format output JSON
+      options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
     });
 
 
@@ -122,5 +136,9 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers(); // This maps the controller routes
+
+// user CORS middleware
+app.UseCors();
+
 
 app.Run();
