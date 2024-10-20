@@ -25,9 +25,7 @@ export default function LoginForm() {
       .then((res) => {
         Cookies.set('token', res.Token);
         setUser({
-          id: res.user.Id,
-          username: res.user.Username,
-          email: res.user.Email,
+          ...res?.user,
           role: res.user.isAdmin ? 'admin' : 'user',
         });
         showModal({

@@ -50,10 +50,7 @@ export default function UploadPhoto() {
   };
 
   const handleCreateCar = async (data) => {
-    const res = await fetchFromAPI('/api/Car', { method: 'POST', body: data });
-  };
-  const handleCreateOrder = async () => {
-    const res = await fetchFromAPI('/api/Order', { method: 'POST', body: {} });
+    const res = await fetchFromAPI('/api/Car/loginOrder', { method: 'POST', body: data });
   };
 
   return (

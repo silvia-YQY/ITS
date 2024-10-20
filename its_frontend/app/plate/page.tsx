@@ -5,7 +5,7 @@ import { fetchFromAPI } from '@/utils/fetcher';
 // Simulate fetching data (you can replace this with actual API or database fetch)
 async function fetchData() {
   const res = await fetchFromAPI('/api/Car');
-  const carPlates = res.map((item) => item.CarPlate);
+  const carPlates = res.map((item) => item.carPlate);
   console.log(carPlates);
   return carPlates;
 }

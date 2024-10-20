@@ -1,36 +1,35 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Typography, TablePagination } from '@mui/material';
+import { fetchFromAPI } from '@/utils/fetcher';
 
-interface User {
-  id: number;
-  username: string;
-  email: string;
-}
-
-interface Car {
-  id: number;
+interface IOrder {
+  carId: number;
   carPlate: string;
-  user: User;
-}
-
-interface ParkingRecord {
-  id: number;
-  car: Car;
-  startTime: string;
   endTime: string;
   fee: number;
-  status: number;
+  id: number;
+  orderStatus: number;
+  startTime: string;
+  userId: number;
+  userName: string;
 }
-
 interface IOrderProps {
   orders: IOrder[];
 }
 
-const OrderTable: React.FC<IOrderProps> = ({ orders }) => {
+const OrderTable: React.FC<IOrderProps> = () => {
+  const [orders, setOrders] = useState<IOrder[]>([]);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
+
+  useEffect(() => {
+    fetchFromAPI('/api/Order').then((res) => {
+      console.log(res);
+      setOrders(res);
+    });
+  }, []);
 
   const handleChangePage = (event: unknown, newPage: number) => {
     setPage(newPage);
@@ -52,7 +51,6 @@ const OrderTable: React.FC<IOrderProps> = ({ orders }) => {
             <TableRow>
               <TableCell>Car Plate</TableCell>
               <TableCell>Username</TableCell>
-              <TableCell>Email</TableCell>
               <TableCell>Start Time</TableCell>
               <TableCell>End Time</TableCell>
               <TableCell>Fee</TableCell>
@@ -60,14 +58,13 @@ const OrderTable: React.FC<IOrderProps> = ({ orders }) => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {orders.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((record) => (
+            {orders.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((record: IOrder) => (
               <TableRow key={record.id}>
-                <TableCell>{record.car.carPlate}</TableCell>
-                <TableCell>{record.car.user.username}</TableCell>
-                <TableCell>{record.car.user.email}</TableCell>
+                <TableCell>{record.carPlate}</TableCell>
+                <TableCell>{record.userName}</TableCell>
                 <TableCell>{new Date(record.startTime).toLocaleString()}</TableCell>
                 <TableCell>{new Date(record.endTime).toLocaleString()}</TableCell>
-                <TableCell>{record.fee.toLocaleString('en-US', { style: 'currency', currency: 'USD' })}</TableCell>
+                <TableCell>{record.fee.toLocaleString('en-US', { style: 'currency', currency: 'NZD' })}</TableCell>
                 <TableCell>{record.status === 0 ? 'Active' : 'Inactive'}</TableCell>
               </TableRow>
             ))}
