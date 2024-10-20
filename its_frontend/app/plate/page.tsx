@@ -5,7 +5,9 @@ import { fetchFromAPI } from '@/utils/fetcher';
 // Simulate fetching data (you can replace this with actual API or database fetch)
 async function fetchData() {
   const res = await fetchFromAPI('/api/Car');
-  return res.map((item) => item.CarPlate);
+  const carPlates = res.map((item) => item.CarPlate);
+  console.log(carPlates);
+  return carPlates;
 }
 
 const PlatePage = async () => {
@@ -14,7 +16,7 @@ const PlatePage = async () => {
   return (
     <div>
       {/* Pass the fetched data to the client component */}
-      <CarPlate orders={records} />
+      <CarPlate plates={records} />
     </div>
   );
 };

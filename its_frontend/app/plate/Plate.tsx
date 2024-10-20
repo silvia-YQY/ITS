@@ -5,9 +5,9 @@ import { TextField, Button, List, ListItem, ListItemText, IconButton, Typography
 import DeleteIcon from '@mui/icons-material/Delete';
 import { fetchFromAPI } from '@/utils/fetcher';
 
-const PlatePage = () => {
+const PlatePage = (props: { plates: string }) => {
   const [carPlate, setCarPlate] = useState('');
-  const [carPlates, setCarPlates] = useState<string[]>([]); // List to store submitted car plates
+  const [carPlates, setCarPlates] = useState<string[]>(props.plates); // List to store submitted car plates
 
   // Handle input change
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {

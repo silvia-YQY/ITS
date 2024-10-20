@@ -37,8 +37,7 @@ export default function UploadPhoto() {
           const imageUrl = canvas.toDataURL('image/jpeg', 0.8); // 0.8 is the quality (80%)
           const carPlate = generateRandomCarPlate();
           setCarPlate(generateRandomCarPlate());
-          console.log('Uploaded file:', file, imageUrl, previewURL);
-          console.log('user file:',user);
+          // console.log('Uploaded file:', file, imageUrl, previewURL);
           await handleCreateCar({
             carPlate: carPlate,
             url: imageUrl,
