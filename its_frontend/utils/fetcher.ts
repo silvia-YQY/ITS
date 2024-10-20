@@ -25,7 +25,7 @@ export async function fetchFromAPI<T>(
   endpoint: string,
   options: {
     method?: 'GET' | 'POST' | 'PUT' | 'DELETE';
-    body?: any;
+    body?: unknown;
     headers?: HeadersInit;
   } = {} // Default options: method is GET if not provided
 ): Promise<T> {

@@ -15,7 +15,7 @@ export async function POST(request: Request) {
     if (!externalApiResponse.ok) {
       const errorBody = await externalApiResponse.json();
       console.log('error', errorBody);
-      return NextResponse.json({ error: errorBody.message }, { status: externalApiResponse.status });
+      return NextResponse.json({ error: errorBody.title }, { status: externalApiResponse.status });
     }
 
     const externalRes = await externalApiResponse.json();

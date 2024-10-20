@@ -39,7 +39,7 @@ export default function LoginForm() {
       })
       .catch((err) => {
         showModal({
-          title: err.message,
+          title: err.error,
           onConfirm: () => {},
         });
       });
@@ -50,19 +50,6 @@ export default function LoginForm() {
       <Typography id='login-form' variant='h5' component='h1'>
         Login
       </Typography>
-      {/* Username Field */}
-      <TextField
-        label='Username'
-        {...register('username', { required: 'Username is required' })}
-        variant='outlined'
-        fullWidth
-        error={!!errors.username}
-        helperText={errors.username ? errors.username.message : ''}
-        margin='normal'
-        required
-        aria-label='username'
-        inputProps={{ 'aria-required': 'true' }}
-      />
       <TextField
         label='Email'
         {...register('email', { required: 'Email is required' })}
